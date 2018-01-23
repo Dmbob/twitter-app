@@ -1,5 +1,6 @@
 # Twitter App #
-## Author: Bob Henley ##
+
+Application that allows a user to search for tweets based on username, hastags, or location. Functionality also includes the ability to log into twitter and post Tweets.
 
 ### Overview ###
 
