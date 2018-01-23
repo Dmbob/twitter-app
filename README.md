@@ -1,3 +1,6 @@
+# Twitter App #
+## Author: Bob Henley ##
+
 ### Overview ###
 
 I chose to create the Twitter App as my project. The reason that I chose to do this is because I did not have much experience with Twitter and the way that it works. I figured this would be an enjoyable and good way to learn how Twitter, and the Twitter API works.
