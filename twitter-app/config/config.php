@@ -11,6 +11,5 @@
 
 	//Include any libraries, and their namespaces.
 	require('vendor/autoload.php');
-	use GuzzleHttp\Client;
 
 ?>

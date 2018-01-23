@@ -26,10 +26,14 @@ class TwitterRequest {
 	}
 
 	//Function to make and authorize a request to the Twitter API from the application.
-	public function make_application_request($api_string, $api_method, $options = []) {
+	protected function make_application_request($api_string, $api_method, $options = []) {
 		$response = $this->twitter_client->request($api_method, $api_string, $options);
 
 		return $response->getBody();
+	}
+
+	public function get_user_timeline($user) {
+		return $this->make_application_request('statuses/user_timeline.json?screen_name='.$user, 'GET');
 	}
 }
 
