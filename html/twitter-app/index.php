@@ -18,7 +18,7 @@
 
 <!DOCTYPE html>
 
-<html>
+<html class="has-navbar-fixed-top">
 	<head>
 		<title>DM-Twitter-App</title>
 		<meta charset='utf-8' />
@@ -31,12 +31,20 @@
 	</head>
 
 	<body>
-		<nav class="navbar is-dark" role="navigation" aria-label="main-navigation">
+		<nav class="navbar is-dark is-fixed-top" role="navigation" aria-label="main-navigation">
 			<div class="navbar-start">
 				<div class="navbar-brand">
 					<a href="index.php" class="navbar-item" style="font-size: 14pt;"><b>Twitter Viewer</b></a>
 				</div>
 				<a class="navbar-item" href="index.php">Post a Tweet</a>
+				<div class="navbar-item">
+					<div class="control has-icons-left">
+						<input id="search_box" type="text" class="input" placeholder="Username">
+						<span class="icon is-left" style="font-size: 14pt;"><i class="fa fa-at"></i></span>
+					</div>
+					<input id="tweet_number" type="number" class="input navbar-item" placeholder="# of Tweets">
+					<button id="search_btn" class="button navbar-item"><i class="fa fa-search"></i></button>
+				</div>
 			</div>
 
 			<div class="navbar-end">
@@ -44,13 +52,36 @@
 			</div>
 		</nav>
 
-		<div id="search">
-			<div class="control has-icons-left" style="display: inline-block; width: 75%">
-				<input id="search_box" type="text" class="input is-dark" placeholder="Username">
-				<span class="icon is-left" style="font-size: 16pt;">@</span>
+		<div id="main_container" class="columns">
+
+			<!--<div id="menu" class="column is-one-fifth">
+				<aside id="menu" class="menu">
+					<ul class="menu-list">
+						<li>
+							<h4 class="title is-4" >Search</h4>
+							<div class="control has-icons-left" style="display: inline-block; width: 75%; padding-right: 0;">
+								<input id="search_box" type="text" class="input" placeholder="Username">
+								<span class="icon is-left" style="height: 100%; font-size: 16pt;"><i class="fa fa-at"></i></span>
+							</div>
+							<button id="search_btn" class="button"><i class="fa fa-search"></i></button>
+						</li>
+					</ul>
+				</aside>-->
+				<!--<div id="search">
+					<h4 class="title is-4" style="color: white">Search</h4>
+					<div class="control has-icons-left" style="display: inline-block; width: 75%; padding-right: 0;">
+						<input id="search_box" type="text" class="input is-dark" placeholder="Username">
+						<span class="icon is-left" style="height: 100%; font-size: 16pt;"><i class="fa fa-at"></i></span>
+					</div>
+					<button id="search_btn" class="button"><i class="fa fa-search"></i></button>
+				</div>
+			</div>-->
+
+			<div id="content" class="column">
+				<div id="results">
+					<?php //echo $twitter->get_user_timeline("notch"); ?>
+				</div>
 			</div>
-			<button id="search_btn" class="button">Search</button>
 		</div>
-		<div id="response"><?php //echo $twitter->get_user_timeline("notch"); ?></div>
 	</body>
 </html>

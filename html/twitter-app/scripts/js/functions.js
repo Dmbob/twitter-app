@@ -7,6 +7,5 @@ $(document).ready(function() {
 	});
 
 	$("#search_btn").unbind().click(function() {
-		alert("Bind is working");
 	});
 });
