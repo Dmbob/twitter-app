@@ -3,17 +3,15 @@
 	session_start();
 
 	include("../../twitter-app/Auth.php");
-	include("../../twitter-app/TwitterRequest.php");
 
 	use GuzzleHttp\Client;
 
 	$auth = new Auth();
 
+	//Check if the access token has been acquired, if not, then request it and store it.
 	if(!isset($_SESSION['access_token'])) { 
 		$auth->request_app_only_access_token(); 
 	}
-
-	$twitter = new TwitterRequest();
 ?>
 
 <!DOCTYPE html>
@@ -22,11 +20,12 @@
 	<head>
 		<title>DM-Twitter-App</title>
 		<meta charset='utf-8' />
-		<link rel="stylesheet" type="text/css" href="styles/style.css">
 		<link rel="stylesheet" type="text/css" href="styles/bulma.css">
+		<link rel="stylesheet" type="text/css" href="styles/style.css">
 
 		<script src="https://use.fontawesome.com/d7cec055af.js"></script>
 		<script src="scripts/js/jquery-3.3.1.min.js"></script>
+		<script src="scripts/js/mustache.min.js"></script>
 		<script src="scripts/js/functions.js"></script>
 	</head>
 
@@ -37,51 +36,52 @@
 					<a href="index.php" class="navbar-item" style="font-size: 14pt;"><b>Twitter Viewer</b></a>
 				</div>
 				<a class="navbar-item" href="index.php">Post a Tweet</a>
-				<div class="navbar-item">
-					<div class="control has-icons-left">
-						<input id="search_box" type="text" class="input" placeholder="Username">
-						<span class="icon is-left" style="font-size: 14pt;"><i class="fa fa-at"></i></span>
-					</div>
-					<input id="tweet_number" type="number" class="input navbar-item" placeholder="# of Tweets">
-					<button id="search_btn" class="button navbar-item"><i class="fa fa-search"></i></button>
-				</div>
 			</div>
 
 			<div class="navbar-end">
+				<div class="navbar-item ">
+					<input id="search_box" type="text" class="input" placeholder="Search Term">
+					<button id="search_btn" class="button navbar-item"><i class="fa fa-search"></i></button>
+				</div>
 				<a href="#" class="navbar-item"><i class="fa fa-twitter"></i>&nbsp;Sign in with Twitter</a>
 			</div>
 		</nav>
 
-		<div id="main_container" class="columns">
-
-			<!--<div id="menu" class="column is-one-fifth">
-				<aside id="menu" class="menu">
-					<ul class="menu-list">
-						<li>
-							<h4 class="title is-4" >Search</h4>
-							<div class="control has-icons-left" style="display: inline-block; width: 75%; padding-right: 0;">
-								<input id="search_box" type="text" class="input" placeholder="Username">
-								<span class="icon is-left" style="height: 100%; font-size: 16pt;"><i class="fa fa-at"></i></span>
-							</div>
-							<button id="search_btn" class="button"><i class="fa fa-search"></i></button>
-						</li>
-					</ul>
-				</aside>-->
-				<!--<div id="search">
-					<h4 class="title is-4" style="color: white">Search</h4>
-					<div class="control has-icons-left" style="display: inline-block; width: 75%; padding-right: 0;">
-						<input id="search_box" type="text" class="input is-dark" placeholder="Username">
-						<span class="icon is-left" style="height: 100%; font-size: 16pt;"><i class="fa fa-at"></i></span>
-					</div>
-					<button id="search_btn" class="button"><i class="fa fa-search"></i></button>
-				</div>
-			</div>-->
-
-			<div id="content" class="column">
+		<div id="main_container">
+			<div id="content">
 				<div id="results">
-					<?php //echo $twitter->get_user_timeline("notch"); ?>
 				</div>
 			</div>
 		</div>
 	</body>
+
+	<!-- Define a template for each card, This data will be used in Javascript. -->
+	<script id="tweet-card-template" type="text/template">
+		<div class="card tweet">
+			<div class="card-content">
+				<div class="media">
+					<div class="media-left">
+						<figure class="image is-48x48">
+							<img src="{{ profile_pic }}" alt="Pic" style="border-radius: 50%">
+						</figure>
+					</div>
+					<div class="media-content">
+						<p class="title is-5">{{realname}}</p>
+						<p class="subtitle is-6"><a href="https://twitter.com/{{screenname}}">{{screenname}}</a></p>
+					</div>
+				</div>
+				<div class="content">
+					{{#retweeted}}
+						<b><i>Retweeted <a href="https://twitter.com/{{original_tweeter}}">@{{original_tweeter}}</a></i><b>
+						<a href="https://twitter.com/{{original_tweeter}}/status/{{rt_id}}"><div class='retweet'>
+							<p><i>"{{rt_text}}"</i></p>
+						</div></a>
+					{{/retweeted}}
+					{{^retweeted}}
+						<p>{{content}}</p>
+					{{/retweeted}}
+				</div>
+			</div>
+		</div>
+	</script>
 </html>
