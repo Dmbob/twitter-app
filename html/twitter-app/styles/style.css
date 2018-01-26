@@ -32,7 +32,7 @@ nav {
 	column-count: 3;
 	column-gap: 5px;
 	margin: 0 auto;
-	width: 60%;
+	width: 70%;
 	padding-top: 50px;
 	padding-left: 50px;
 	padding-right: 50px;
@@ -77,8 +77,19 @@ nav {
 	overflow: hidden;
 }
 
+.retweet-content {
+	transition: color 0.5s ease;
+	white-space: pre-wrap;
+	color: #848484;
+}
+
+.retweet-content:hover {
+	transition: color 0.5s ease;
+	color: black;
+}
+
 .retweet {
-	color: #9E9E9E;
+	color: black;
 }
 
 @media only screen and (max-width: 1260px) {

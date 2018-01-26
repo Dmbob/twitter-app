@@ -34,15 +34,15 @@ class TwitterRequest {
 	}
 
 	public function search_tweets($search_term) {
-		return $this->make_application_request('search/tweets.json?q='.$search_term.'&tweet_mode=extended&count=100', 'GET');
+		return $this->make_application_request('search/tweets.json?q='.$search_term.'&tweet_mode=extended&count=100&lang=en', 'GET');
 	}
 
 	public function search_tweets_by_geocode($geocode_str) {
-		return $this->make_application_request('search/tweets.json?geocode='.$geocode_str.'&tweet_mode=extended', 'GET');
+		return $this->make_application_request('search/tweets.json?geocode='.$geocode_str.'&tweet_mode=extended&lang=en', 'GET');
 	}
 
 	public function get_user_timeline($user) {
-		return $this->make_application_request('statuses/user_timeline.json?screen_name='.$user.'&tweet_mode=extended', 'GET');
+		return $this->make_application_request('statuses/user_timeline.json?screen_name='.$user.'&tweet_mode=extended&lang=en', 'GET');
 	}
 }
 

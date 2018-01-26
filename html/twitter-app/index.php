@@ -40,7 +40,7 @@
 
 			<div class="navbar-end">
 				<div class="navbar-item ">
-					<input id="search_box" type="text" class="input" placeholder="Search Term">
+					<input id="search_box" type="text" class="input" placeholder="Search Twitter">
 					<button id="search_btn" class="button navbar-item"><i class="fa fa-search"></i></button>
 				</div>
 				<a href="#" class="navbar-item"><i class="fa fa-twitter"></i>&nbsp;Sign in with Twitter</a>
@@ -73,13 +73,18 @@
 				<div class="content">
 					{{#retweeted}}
 						<b><i>Retweeted <a href="https://twitter.com/{{original_tweeter}}">@{{original_tweeter}}</a></i><b>
-						<a href="https://twitter.com/{{original_tweeter}}/status/{{rt_id}}"><div class='retweet'>
-							<p><i>"{{rt_text}}"</i></p>
-						</div></a>
+						<a href="https://twitter.com/{{original_tweeter}}/status/{{rt_id}}">
+							<div class='retweet'>
+								<i class="fa fa-quote-left"></i>&nbsp;<i><span class="retweet-content">{{{rt_text}}}</span></i>&nbsp;<i class="fa fa-quote-right"></i>
+							</div>
+						</a>
 					{{/retweeted}}
 					{{^retweeted}}
-						<p>{{content}}</p>
+						<span class="tweet-content">{{{content}}}</span>
 					{{/retweeted}}
+					{{#media}}
+						<a onclick="window.open('{{media_url_https}}');"><img src="{{media_url_https}}" alt="{{media_url_https}}"></a>
+					{{/media}}
 				</div>
 			</div>
 		</div>
