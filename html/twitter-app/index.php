@@ -72,12 +72,12 @@
 				</div>
 				<div class="content">
 					{{#retweeted}}
-						<b><i>Retweeted <a href="https://twitter.com/{{original_tweeter}}">@{{original_tweeter}}</a></i><b>
-						<a href="https://twitter.com/{{original_tweeter}}/status/{{rt_id}}">
+						<b><i>Retweeted <a href="https://twitter.com/{{original_tweeter}}">@{{original_tweeter}}</a></i></b>
+						<!-- <a href="https://twitter.com/{{original_tweeter}}/status/{{rt_id}}"> -->
 							<div class='retweet'>
-								<i class="fa fa-quote-left"></i>&nbsp;<i><span class="retweet-content">{{{rt_text}}}</span></i>&nbsp;<i class="fa fa-quote-right"></i>
+								<b><i><span class="retweet-content">{{{rt_text}}}</span></i></b>
 							</div>
-						</a>
+						<!-- </a> -->
 					{{/retweeted}}
 					{{^retweeted}}
 						<span class="tweet-content">{{{content}}}</span>
@@ -85,6 +85,10 @@
 					{{#media}}
 						<a onclick="window.open('{{media_url_https}}');"><img src="{{media_url_https}}" alt="{{media_url_https}}"></a>
 					{{/media}}
+				</div>
+				<div style="margin-top: 20px;">
+					<div style="display: inline-block;"><i class="fa fa-retweet"></i>&nbsp;{{retweet_count}}</div>
+					<div style="display: inline-block; float: right"><a onclick="window.open('https://twitter.com/{{screenname}}/status/{{tweet_id}}');"><i class="fa fa-twitter"></i>Open in Twitter</a></div>
 				</div>
 			</div>
 		</div>

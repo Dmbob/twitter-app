@@ -80,7 +80,8 @@ nav {
 .retweet-content {
 	transition: color 0.5s ease;
 	white-space: pre-wrap;
-	color: #848484;
+	/*color: #848484;*/
+	color: black;
 }
 
 .retweet-content:hover {
