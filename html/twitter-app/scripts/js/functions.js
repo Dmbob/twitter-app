@@ -1,3 +1,24 @@
+function buildTwitterString(tweetData) {
+	tweetString = tweetData.full_text;
+
+	//Search and set user mention links.
+	tweetString = tweetString.replace(/(http[s]?[://]([\w./])+)/g, function(foundString) {
+		return foundString.link(foundString);
+	});
+
+	//Search and set user mention links.
+	tweetString = tweetString.replace(/@([A-Za-z0-9-_]+)/g, function(foundString) {
+		return foundString.link("https://twitter.com/"+foundString.replace("@", ""));
+	});
+
+	//Search and set user mention hashtags.
+	tweetString = tweetString.replace(/#([A-Za-z0-9-_]+)/g, function(foundString) {
+		return foundString.link("https://twitter.com/search?src=typd&q=%23"+foundString.replace("#", ""));
+	});
+
+	return tweetString;
+}
+
 function buildTweetCard(jsonData) {
 	tweetData = JSON.parse(jsonData);
 
@@ -11,28 +32,19 @@ function buildTweetCard(jsonData) {
 
 			if(val.hasOwnProperty('retweeted_status')) {
 				rtweeted = true;
-				retweeted_text = val.retweeted_status.full_text;
-				$.each(val.retweeted_status.entities.user_mentions, function(k, v) {
-					retweeted_text = retweeted_text.slice(0, v.indices[0]) + "<a href='https://twitter.com/"+v.screen_name+"'>"+retweeted_text.slice(v.indices[0], v.indices[1]) + "</a>"+retweeted_text.slice(v.indices[1]);
-				});
 				original_retweeter = val.retweeted_status.user.screen_name;
-				rt_id = val.retweeted_status.id_str;
+				full_text = buildTwitterString(val.retweeted_status);
+			}else {
+				full_text = buildTwitterString(val);
 			}
 
-			full_text = val.full_text;
-
-			$.each(val.entities.user_mentions, function(k, v) {
-				full_text = full_text.slice(0, v.indices[0]) + "<a href='https://twitter.com/"+v.screen_name+"'>"+full_text.slice(v.indices[0], v.indices[1]) + "</a>"+full_text.slice(v.indices[1]);
-			});
 			cardData = {
 				realname: val.user.name,
 				screenname: '@'+val.user.screen_name,
 				content: full_text,
 				retweeted: rtweeted,
-				rt_text: retweeted_text,
 				profile_pic: val.user.profile_image_url_https,
 				original_tweeter: original_retweeter,
-				rt_id: rt_id,
 				media: val.entities.hasOwnProperty('media') ? val.extended_entities.media : "",
 				retweet_count: val.retweet_count,
 				tweet_id: val.id_str

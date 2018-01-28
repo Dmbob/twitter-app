@@ -14,7 +14,7 @@ error_reporting(E_ALL);
 				break;
 
 			case '#':
-				echo $twitter->search_tweets($_GET['q']);
+				echo $twitter->search_tweets(urlencode($_GET['q']));
 				break;
 
 			default:

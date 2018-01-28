@@ -73,17 +73,26 @@
 				<div class="content">
 					{{#retweeted}}
 						<b><i>Retweeted <a href="https://twitter.com/{{original_tweeter}}">@{{original_tweeter}}</a></i></b>
-						<!-- <a href="https://twitter.com/{{original_tweeter}}/status/{{rt_id}}"> -->
-							<div class='retweet'>
-								<b><i><span class="retweet-content">{{{rt_text}}}</span></i></b>
-							</div>
-						<!-- </a> -->
+						<div class='retweet'>
+							<b><i><span class="retweet-content">{{{content}}}</span></i></b>
+						</div>
 					{{/retweeted}}
 					{{^retweeted}}
 						<span class="tweet-content">{{{content}}}</span>
 					{{/retweeted}}
 					{{#media}}
-						<a onclick="window.open('{{media_url_https}}');"><img src="{{media_url_https}}" alt="{{media_url_https}}"></a>
+						{{#video_info}}
+							<video class="media_video" onclick="this.paused ? this.play() : this.pause();" controls muted loop>
+								<img id="play_btn" src="gfx/icon.png" alt="Play Video">
+								{{#variants}}
+									<source src="{{url}}" type="{{content_type}}">
+								{{/variants}}
+							  Your browser does not support video.
+							</video>
+						{{/video_info}}
+						{{^video_info}}
+							<a onclick="window.open('{{media_url_https}}');"><img src="{{media_url_https}}" alt="{{media_url_https}}"></a>
+						{{/video_info}}
 					{{/media}}
 				</div>
 				<div style="margin-top: 20px;">
