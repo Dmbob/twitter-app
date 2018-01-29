@@ -7,22 +7,16 @@ error_reporting(E_ALL);
 	$twitter = new TwitterRequest();
 
 	//Look at the first character of the search term and see if it is a special Twitter character.
-	if(isset($_GET['q'])) {
-		switch($_GET['q'][0]) {
-			case '@':
-				echo $twitter->search_tweets($_GET['q']);
-				break;
 
-			case '#':
-				echo $twitter->search_tweets(urlencode($_GET['q']));
-				break;
+/*	if(isset($_GET['user'])) {
+		echo $twitter->get_user_timeline(urlencode($_GET['user']), urlencode($_GET['q']), urlencode($_GET['geo']));
+	}else {
+		echo $twitter->search_tweets(urlencode($_GET['q']), urlencode($_GET['geo']));
+	}*/
 
-			default:
-				echo $twitter->search_tweets($_GET['q']);
-				//echo $twitter->search_tweets($_GET['q']);
-				break;
-		}
-	}else if(isset($_GET["geo"])) {
-		echo $twitter->search_tweets_by_geocode($_GET['geo']);
-	}
+	$user = isset($_GET['user']) ? $_GET['user'] : "";
+	$query = isset($_GET['q']) ? $_GET['q']  : "";
+	$geo = isset($_GET['geo']) ? $_GET['geo'] : "";
+
+	echo $twitter->search_tweets(urlencode($user), urlencode($query), urlencode($geo));
 ?>

@@ -9,11 +9,29 @@ body {
 	color: white;
 }
 
-nav {
-	border-bottom: 5px solid #424242;
+#search_menu {
+	position: fixed;
+	z-index: 1;
+	width: 270px;
+	height: 270px;
+	top: 150px;
+	left: 20px;
+	background-color: #262626;
+}
+
+#search_items {
+	margin: 0 auto;
+	width: 90%;
+	font-size: 16pt;
+	color: #4f92ff;
+}
+
+#search_items input{
+	margin-bottom: 10px;
 }
 
 #main_container {
+	z-index: 0;
 	margin: 0;
 	width: 100%;
 	height: 100%;
@@ -47,18 +65,15 @@ nav {
 
 #search_box {
 	width: 100%;
-	font-size: 14pt;
-	height: 35px;
 }
 
 #search_btn {
-	width: 50px;
+	width: 100%;
 	font-size: 14pt;
 	background-color: #2ba3ff;
 	text-decoration: none;
 	color: white;
 	border: none;
-	margin-left: 5px;
 	height: 35px;
 }
 
@@ -93,7 +108,11 @@ nav {
 	color: black;
 }
 
-@media only screen and (max-width: 1260px) {
+@media only screen and (max-width: 1626px) {
+	#main_container {
+		margin-left: 100px;
+	}
+
 	#results {
 		column-count: 2;
 	}

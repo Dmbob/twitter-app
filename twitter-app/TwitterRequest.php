@@ -33,8 +33,12 @@ class TwitterRequest {
 		return $response->getBody();
 	}
 
-	public function search_tweets($search_term) {
-		return $this->make_application_request('search/tweets.json?q='.$search_term.'&tweet_mode=extended&count=100&lang=en', 'GET');
+	protected function build_search_query($user, $search_term, $geolocation) {
+		// Check if the user or location are empty, and if they are, do not include them in the query.
+		$user_param = empty($user) ? "" : "from%3A".$user."%20";
+		$geo_param = empty($geolocation) ?  "" : "&geocode=".$geolocation;
+
+		return $user_param.$search_term.$geo_param;
 	}
 
 	public function search_tweets_by_geocode($geocode_str) {
@@ -43,6 +47,11 @@ class TwitterRequest {
 
 	public function get_user_timeline($user) {
 		return $this->make_application_request('statuses/user_timeline.json?screen_name='.$user.'&tweet_mode=extended&lang=en', 'GET');
+	}
+
+	public function search_tweets($user, $search_term, $geolocation) {
+		$search_parameters = $this->build_search_query($user, $search_term, $geolocation);
+		return $this->make_application_request('search/tweets.json?q='.$search_parameters.'&tweet_mode=extended&count=25&lang=en', 'GET');
 	}
 }
 

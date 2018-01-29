@@ -26,6 +26,7 @@
 		<script src="https://use.fontawesome.com/d7cec055af.js"></script>
 		<script src="scripts/js/jquery-3.3.1.min.js"></script>
 		<script src="scripts/js/mustache.min.js"></script>
+		<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAjb4PSWxisxqge658jRMA4AWlyRe5jeRc&libraries=places&callback=getGeolocation" async defer></script>
 		<script src="scripts/js/functions.js"></script>
 	</head>
 
@@ -35,17 +36,43 @@
 				<div class="navbar-brand">
 					<a href="index.php" class="navbar-item" style="font-size: 14pt;"><b>Twitter Viewer</b></a>
 				</div>
-				<a class="navbar-item" href="index.php">Post a Tweet</a>
+				<a class="navbar-item is-hidden-touch" onclick="get_tweets_in_current_area();">View Tweets in my Area</a>
 			</div>
 
 			<div class="navbar-end">
-				<div class="navbar-item ">
-					<input id="search_box" type="text" class="input" placeholder="Search Twitter">
-					<button id="search_btn" class="button navbar-item"><i class="fa fa-search"></i></button>
-				</div>
-				<a href="#" class="navbar-item"><i class="fa fa-twitter"></i>&nbsp;Sign in with Twitter</a>
+				<a href="#" class="navbar-item is-hidden-touch"><i class="fa fa-twitter"></i>&nbsp;Sign in with Twitter</a>
 			</div>
 		</nav>
+
+		<div id="results_hero">
+			<div id="search_results">
+
+			</div>
+		</div>
+
+		<div id="search_menu" class="box">
+			<div id="search_items">
+				<h4 class="title is-4" style="color: white;">Search</h4>
+				<div class="control has-icons-left">
+					<input id="username" type="text" class="input search_input" placeholder="Twitter User">
+					<span class="icon is-left"><i class="fa fa-at"></i></span>
+				</div>
+
+				<div class="control has-icons-left">
+					<input id="search_box" type="text" class="input search_input" placeholder="Search Twitter">
+					<span class="icon is-left"><i class="fa fa-search"></i></span>
+				</div>
+
+				<div class="control has-icons-left">
+					<input id="loc_autocomplete" type="text" class="input search_input" placeholder="Location">
+					<input id="latitude" type="hidden">
+					<input id="longitude" type="hidden">
+					<span class="icon is-left"><i class="fa fa-map-marker"></i></span>
+				</div>
+
+				<button id="search_btn" class="button navbar-item"><i class="fa fa-search"></i></button>
+			</div>
+		</div>
 
 		<div id="main_container">
 			<div id="content">
@@ -98,6 +125,10 @@
 				<div style="margin-top: 20px;">
 					<div style="display: inline-block;"><i class="fa fa-retweet"></i>&nbsp;{{retweet_count}}</div>
 					<div style="display: inline-block; float: right"><a onclick="window.open('https://twitter.com/{{screenname}}/status/{{tweet_id}}');"><i class="fa fa-twitter"></i>Open in Twitter</a></div>
+				</div>
+
+				<div style="margin-top: 10px;">
+					{{created_date}}
 				</div>
 			</div>
 		</div>
