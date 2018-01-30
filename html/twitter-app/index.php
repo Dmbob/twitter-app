@@ -35,6 +35,12 @@
 			<div class="navbar-start">
 				<div class="navbar-brand">
 					<a href="index.php" class="navbar-item" style="font-size: 14pt;"><b>Twitter Viewer</b></a>
+
+					<button class="button navbar-burger is-dark">
+						<span></span>
+						<span></span>
+						<span></span>
+					</button>
 				</div>
 				<a class="navbar-item is-hidden-touch" onclick="get_tweets_in_current_area();">View Tweets in my Area</a>
 			</div>
@@ -53,6 +59,7 @@
 		<div id="search_menu" class="box">
 			<div id="search_items">
 				<h4 class="title is-4" style="color: white;">Search</h4>
+				<div id="error_result" style="color: #ff2121; font-size: 11pt; margin-bottom: 10px;"></div>
 				<div class="control has-icons-left">
 					<input id="username" type="text" class="input search_input" placeholder="Twitter User">
 					<span class="icon is-left"><i class="fa fa-at"></i></span>
@@ -77,6 +84,7 @@
 		<div id="main_container">
 			<div id="content">
 				<div id="results">
+					<span style="position: absolute; top: 45%; left: 43%; font-size: 20pt;">No Data to show, please make a search.</span>
 				</div>
 			</div>
 		</div>
@@ -122,13 +130,12 @@
 						{{/video_info}}
 					{{/media}}
 				</div>
-				<div style="margin-top: 20px;">
-					<div style="display: inline-block;"><i class="fa fa-retweet"></i>&nbsp;{{retweet_count}}</div>
-					<div style="display: inline-block; float: right"><a onclick="window.open('https://twitter.com/{{screenname}}/status/{{tweet_id}}');"><i class="fa fa-twitter"></i>Open in Twitter</a></div>
-				</div>
-
 				<div style="margin-top: 10px;">
 					{{created_date}}
+				</div>
+				<div style="margin-top: 10px;">
+					<div style="display: inline-block;"><i class="fa fa-retweet"></i>&nbsp;{{retweet_count}}</div>
+					<div style="display: inline-block; float: right"><a onclick="window.open('https://twitter.com/{{screenname}}/status/{{tweet_id}}');"><i class="fa fa-twitter"></i>Open in Twitter</a></div>
 				</div>
 			</div>
 		</div>

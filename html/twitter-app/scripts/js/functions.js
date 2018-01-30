@@ -19,8 +19,7 @@ function buildTwitterString(tweetData) {
 	return tweetString;
 }
 
-function buildTweetCard(jsonData) {
-	var tweetData = JSON.parse(jsonData);
+function buildTweetCard(tweetData) {
 	var foundTweets = tweetData;
 
 	if(tweetData.hasOwnProperty('statuses')) {
@@ -91,8 +90,17 @@ function search_tweets() {
 	$.get("scripts/php/search_twitter.php?"+searchParameters, function(response) {
 		// console.log(response);
 		// $("#results").html(response);
+		var jsonData = JSON.parse(response);
+		$("#error_result").html("");
+
 		console.log(JSON.parse(response));
-		buildTweetCard(response);
+		if(jsonData.hasOwnProperty('errors')) { 
+			$.each(jsonData.errors, function(key, val) {
+				$("#error_result").append(val.message + "<br>");
+			});
+		}else {
+			buildTweetCard(jsonData);
+		}
 	}).then(function() {
 		$("#search_btn").removeClass("is-loading");
 	});
@@ -118,9 +126,10 @@ function get_tweets_in_current_area() {
 			var lat_long_str = position.coords.latitude + "," + position.coords.longitude + ",5mi";
 			$("#results").html("");
 			$.get("scripts/php/search_twitter.php?geo="+lat_long_str, function(response) {
+				jsonData = JSON.parse(response);
 				// console.log(response);
-				console.log(JSON.parse(response));
-				buildTweetCard(response);
+				console.log(jsonData);
+				buildTweetCard(jsonData);
 			});
 		});
 	}

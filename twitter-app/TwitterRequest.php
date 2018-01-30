@@ -9,6 +9,7 @@ session_start();
 
 require_once("config/config.php");
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
 
 class TwitterRequest {
 
@@ -28,9 +29,13 @@ class TwitterRequest {
 
 	//Function to make and authorize a request to the Twitter API from the application.
 	protected function make_application_request($api_string, $api_method, $options = []) {
-		$response = $this->twitter_client->request($api_method, $api_string, $options);
+		try {
+			$response = $this->twitter_client->request($api_method, $api_string, $options);
 
-		return $response->getBody();
+			return $response->getBody();
+		}catch(RequestException $e) {
+			return $e->getResponse()->getBody();
+		}
 	}
 
 	protected function build_search_query($user, $search_term, $geolocation) {
@@ -39,6 +44,15 @@ class TwitterRequest {
 		$geo_param = empty($geolocation) ?  "" : "&geocode=".$geolocation;
 
 		return $user_param.$search_term.$geo_param;
+	}
+
+	protected function user_exists($user) {
+		if(empty($user)) {
+			return json_encode("{'user_exists': true}");
+		}else {
+			$request = $this->make_application_request('users/lookup.json?screen_name='.$user, 'GET');
+			return $request;
+		}
 	}
 
 	public function search_tweets_by_geocode($geocode_str) {
@@ -50,8 +64,14 @@ class TwitterRequest {
 	}
 
 	public function search_tweets($user, $search_term, $geolocation) {
-		$search_parameters = $this->build_search_query($user, $search_term, $geolocation);
-		return $this->make_application_request('search/tweets.json?q='.$search_parameters.'&tweet_mode=extended&count=25&lang=en', 'GET');
+		$user_exists = json_decode($this->user_exists($user), true);
+
+		if(isset($user_exists["errors"])) {
+			return json_encode($user_exists);
+		}else {
+			$search_parameters = $this->build_search_query($user, $search_term, $geolocation);
+			return $this->make_application_request('search/tweets.json?q='.$search_parameters.'&tweet_mode=extended&count=25&lang=en', 'GET');
+		}
 	}
 }
 
