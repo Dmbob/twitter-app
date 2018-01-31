@@ -25,6 +25,8 @@
 
 		<script src="https://use.fontawesome.com/d7cec055af.js"></script>
 		<script src="scripts/js/jquery-3.3.1.min.js"></script>
+		<script src="scripts/js/jquery-ui.min.js"></script>
+		<script src="scripts/js/jquery.shapeshift.min.js"></script>
 		<script src="scripts/js/mustache.min.js"></script>
 		<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAjb4PSWxisxqge658jRMA4AWlyRe5jeRc&libraries=places&callback=getGeolocation" async defer></script>
 		<script src="scripts/js/functions.js"></script>
@@ -92,7 +94,12 @@
 
 	<!-- Define a template for each card, This data will be used in Javascript. -->
 	<script id="tweet-card-template" type="text/template">
-		<div class="card tweet">
+		<div class="card tweet item">
+			<div style="display: inline-block; float: right;">
+				<a onclick="$(this.parentNode.parentNode).css('display', 'none'); $('#results').trigger('ss-rearrange');" class="card-header-icon" aria-label="remove">
+					<span class="icon"><i style="color: red; font-size: 14pt;" class="fa fa-times"></i></span>
+				</a>
+			</div>
 			<div class="card-content">
 				<div class="media">
 					<div class="media-left">
@@ -108,17 +115,14 @@
 				<div class="content">
 					{{#retweeted}}
 						<b><i>Retweeted <a href="https://twitter.com/{{original_tweeter}}">@{{original_tweeter}}</a></i></b>
-						<div class='retweet'>
-							<b><i><span class="retweet-content">{{{content}}}</span></i></b>
-						</div>
+						<b><i><span class="retweet-content">{{{content}}}</span></i></b>
 					{{/retweeted}}
 					{{^retweeted}}
 						<span class="tweet-content">{{{content}}}</span>
 					{{/retweeted}}
 					{{#media}}
 						{{#video_info}}
-							<video class="media_video" onclick="this.paused ? this.play() : this.pause();" controls muted loop>
-								<img id="play_btn" src="gfx/icon.png" alt="Play Video">
+							<video onloadeddata="$('#results').trigger('ss-rearrange');" class="media_video" onclick="this.paused ? this.play() : this.pause();" controls muted loop>
 								{{#variants}}
 									<source src="{{url}}" type="{{content_type}}">
 								{{/variants}}
@@ -126,7 +130,7 @@
 							</video>
 						{{/video_info}}
 						{{^video_info}}
-							<a onclick="window.open('{{media_url_https}}');"><img src="{{media_url_https}}" alt="{{media_url_https}}"></a>
+							<a onclick="window.open('{{media_url_https}}');"><img onload="$('#results').trigger('ss-rearrange');" src="{{media_url_https}}" alt="{{media_url_https}}"></a>
 						{{/video_info}}
 					{{/media}}
 				</div>

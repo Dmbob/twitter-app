@@ -65,6 +65,8 @@ function buildTweetCard(tweetData) {
 			$("#results").append(card);
 		}
 	});
+	
+	$("#results").shapeshift();
 }
 
 function get_search_params() {
@@ -84,6 +86,7 @@ function get_search_params() {
 function search_tweets() {
 	$("#search_btn").addClass("is-loading");
 	$("#results").html("");
+	$("#results").trigger("ss-destroy");
 
 	var searchParameters = get_search_params();
 
@@ -121,6 +124,7 @@ function getGeolocation() {
 }
 
 function get_tweets_in_current_area() {
+	//$("#results").trigger("ss-destroy");
 	if(navigator.geolocation) {
 		navigator.geolocation.getCurrentPosition(function(position) {
 			var lat_long_str = position.coords.latitude + "," + position.coords.longitude + ",5mi";
@@ -136,6 +140,9 @@ function get_tweets_in_current_area() {
 }
 
 $(document).ready(function() {
+	$("#results").shapeshift({
+		animateOnInit: true
+	});
 	//Bind the enter key to the search button upon typing into the search box.
 	$('.search_input').keypress(function(event){
 		if(event.keyCode == 13){
