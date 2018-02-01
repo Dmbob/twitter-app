@@ -11,12 +11,11 @@ error_reporting(E_ALL);
 
 	$auth = new Auth();
 
-	echo $auth->request_user_auth_request_token();
-
 	//Check if the access token has been acquired, if not, then request it and store it.
 	if(!isset($_SESSION['access_token'])) { 
 		$auth->request_app_only_access_token(); 
 	}
+	echo $auth->request_user_auth_request_token();
 ?>
 
 <!DOCTYPE html>
