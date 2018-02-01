@@ -27,7 +27,7 @@ class Auth {
 	}
 
 	protected function generate_oauth_signature($oauth_consumer_key, $oauth_callback, $oauth_nonce, $oauth_signature_method, $oauth_timestamp) {
-		$parameter_string = "oauth_consumer_key=".$oauth_consumer_key."&oauth_nonce=".$oauth_nonce."&oauth_callback=".$oauth_callback."&oauth_signature_method=".$oauth_signature_method."&oauth_timestamp=".$oauth_timestamp."&oauth_version=".urlencode("1.0");
+		$parameter_string = "oauth_nonce=".$oauth_nonce."&oauth_callback=".$oauth_callback."&oauth_signature_method=".$oauth_signature_method."&oauth_timestamp=".$oauth_timestamp."&oauth_consumer_key=".$oauth_consumer_key."&oauth_version=1.0";
 		$signature_base_string = "POST&".urlencode("https://api.twitter.com/oauth/request_token")."&".urlencode($parameter_string);
 		$signing_key = urlencode(CONSUMER_SECRET)."&";
 		
@@ -72,12 +72,12 @@ class Auth {
 		echo $oauth_signature;
 
 		$response = $this->auth_client->request('POST', "oauth/request_token", [
-			'body' => 'grant_type=client_credentials',
-
 			'headers' => [
 				'Authorization' => $auth_header
 			]
 		]);
+
+		return "Response: ".$response;
 	}
 }
 
