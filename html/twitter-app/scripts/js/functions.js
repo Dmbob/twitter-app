@@ -168,6 +168,7 @@ function get_tweets_in_current_area() {
 				jsonData = JSON.parse(response);
 				// console.log(response);
 				console.log(jsonData);
+				nextSetOfTweets = jsonData.search_metadata.next_results;
 				buildTweetCard(jsonData);
 			});
 		});

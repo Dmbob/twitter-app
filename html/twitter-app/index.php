@@ -1,4 +1,7 @@
 <?php
+/*ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);*/
 	session_name('twitter-app');
 	session_start();
 
@@ -7,6 +10,8 @@
 	use GuzzleHttp\Client;
 
 	$auth = new Auth();
+
+	// echo $auth->request_user_auth_request_token();
 
 	//Check if the access token has been acquired, if not, then request it and store it.
 	if(!isset($_SESSION['access_token'])) { 
