@@ -1,3 +1,5 @@
+var nextSetOfTweets = "";
+
 function buildTwitterString(tweetData) {
 	tweetString = tweetData.full_text;
 
@@ -11,7 +13,7 @@ function buildTwitterString(tweetData) {
 		return foundString.link("https://twitter.com/"+foundString.replace("@", ""));
 	});
 
-	//Search and set user mention hashtags.
+	//Search and set hashtags.
 	tweetString = tweetString.replace(/#([A-Za-z0-9-_]+)/g, function(foundString) {
 		return foundString.link("https://twitter.com/search?src=typd&q=%23"+foundString.replace("#", ""));
 	});
@@ -19,8 +21,17 @@ function buildTwitterString(tweetData) {
 	return tweetString;
 }
 
+function validate_input() {
+	if($("#tweet_count").val() < 1) {
+		$("#tweet_count").val(1);
+	}else if($("#tweet_count").val() > 100) {
+		$("#tweet_count").val(100);
+	}
+}
+
 function buildTweetCard(tweetData) {
 	var foundTweets = tweetData;
+	$("#results").trigger("ss-destroy");
 
 	if(tweetData.hasOwnProperty('statuses')) {
 		var foundTweets = tweetData.statuses;
@@ -66,13 +77,16 @@ function buildTweetCard(tweetData) {
 		}
 	});
 	
-	$("#results").shapeshift();
+	$("#results").shapeshift({
+		animationSpeed: 100
+	});
 }
 
 function get_search_params() {
 	var username = $("#username").val().replace('@', '');
 	var searchQuery = $("#search_box").val().replace("#", "%23");
 	var geocodeStr = "";
+	var tweetCount = $("#tweet_count").val();
 
 	if($("#latitude").val().length > 0 && $("#longitude").val().length > 0) {
 		geocodeStr = $("#latitude").val() + "," + $("#longitude").val() + ",5mi";
@@ -80,7 +94,7 @@ function get_search_params() {
 
 	// console.log("user="+username+"&q="+searchQuery+"&geo="+geocodeStr);
 
-	return "user="+username+"&q="+searchQuery+"&geo="+geocodeStr;
+	return "user="+username+"&q="+searchQuery+"&geo="+geocodeStr+"&count="+tweetCount;
 }
 
 function search_tweets() {
@@ -88,8 +102,10 @@ function search_tweets() {
 	$("#results").html("");
 	$("#results").trigger("ss-destroy");
 
-	var searchParameters = get_search_params();
+	validate_input();
 
+	var searchParameters = get_search_params();
+	console.log(searchParameters);
 	$.get("scripts/php/search_twitter.php?"+searchParameters, function(response) {
 		// console.log(response);
 		// $("#results").html(response);
@@ -102,6 +118,7 @@ function search_tweets() {
 				$("#error_result").append(val.message + "<br>");
 			});
 		}else {
+			nextSetOfTweets = jsonData.search_metadata.next_results;
 			buildTweetCard(jsonData);
 		}
 	}).then(function() {
@@ -109,6 +126,24 @@ function search_tweets() {
 	});
 }
 
+function load_more_tweets() {
+	$.get("scripts/php/search_twitter.php?next_results="+encodeURIComponent(nextSetOfTweets), function(response) {
+		// console.log(response);
+		var jsonData = JSON.parse(response);
+		$("#error_result").html("");
+		console.log(JSON.parse(response));
+		if(jsonData.hasOwnProperty('errors')) { 
+			$.each(jsonData.errors, function(key, val) {
+				$("#error_result").append(val.message + "<br>");
+			});
+		}else {
+			nextSetOfTweets = jsonData.search_metadata.next_results;
+			buildTweetCard(jsonData);
+		}
+	});
+}
+
+//Callback function for the Google Places API.
 function getGeolocation() {
 	var locationInput = document.getElementById("loc_autocomplete");
 	var locationBox = new google.maps.places.Autocomplete(locationInput);
@@ -140,9 +175,14 @@ function get_tweets_in_current_area() {
 }
 
 $(document).ready(function() {
-	$("#results").shapeshift({
-		animateOnInit: true
+	$("#results").shapeshift();
+
+	$(window).scroll(function() {
+		if($(window).scrollTop() + $(window).height() >= $(document).height()) {
+			load_more_tweets();
+		}
 	});
+
 	//Bind the enter key to the search button upon typing into the search box.
 	$('.search_input').keypress(function(event){
 		if(event.keyCode == 13){
@@ -158,6 +198,7 @@ $(document).ready(function() {
 	});
 
 	$("#search_btn").unbind().click(function() {
+		$(window).scrollTop(0);
 		search_tweets();
 	});
 });

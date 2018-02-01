@@ -78,7 +78,7 @@
 					<input id="longitude" type="hidden">
 					<span class="icon is-left"><i class="fa fa-map-marker"></i></span>
 				</div>
-
+				<input id="tweet_count" type="number" min="1" max="100" class="input search_input" placeholder="Number of Tweets" value="25">
 				<button id="search_btn" class="button navbar-item"><i class="fa fa-search"></i></button>
 			</div>
 		</div>

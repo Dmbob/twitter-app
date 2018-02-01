@@ -14,9 +14,14 @@ error_reporting(E_ALL);
 		echo $twitter->search_tweets(urlencode($_GET['q']), urlencode($_GET['geo']));
 	}*/
 
-	$user = isset($_GET['user']) ? $_GET['user'] : "";
-	$query = isset($_GET['q']) ? $_GET['q']  : "";
-	$geo = isset($_GET['geo']) ? $_GET['geo'] : "";
+	if(isset($_GET["next_results"])) {
+		echo $twitter->load_more_tweets($_GET["next_results"]);
+	}else {
+		$user = isset($_GET['user']) ? htmlspecialchars($_GET['user']) : "";
+		$query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : "";
+		$geo = isset($_GET['geo']) ? htmlspecialchars($_GET['geo']) : "";
+		$count = isset($_GET['count']) ? htmlspecialchars($_GET["count"]) : "25";
 
-	echo $twitter->search_tweets(urlencode($user), urlencode($query), urlencode($geo));
+		echo $twitter->search_tweets(urlencode($user), urlencode($query), urlencode($geo), urlencode($count));
+	}
 ?>

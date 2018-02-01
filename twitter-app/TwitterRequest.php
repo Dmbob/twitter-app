@@ -63,14 +63,20 @@ class TwitterRequest {
 		return $this->make_application_request('statuses/user_timeline.json?screen_name='.$user.'&tweet_mode=extended&lang=en', 'GET');
 	}
 
-	public function search_tweets($user, $search_term, $geolocation) {
+	public function search_tweets($user, $search_term, $geolocation, $count) {
 		$user_exists = json_decode($this->user_exists($user), true);
 
 		if(isset($user_exists["errors"])) {
 			return json_encode($user_exists);
 		}else {
 			$search_parameters = $this->build_search_query($user, $search_term, $geolocation);
-			return $this->make_application_request('search/tweets.json?q='.$search_parameters.'&tweet_mode=extended&count=25&lang=en', 'GET');
+			return $this->make_application_request('search/tweets.json?q='.$search_parameters.'&count='.$count.'&tweet_mode=extended&lang=en', 'GET');
+		}
+	}
+
+	public function load_more_tweets($params) {
+		if(!empty($params)) {
+			return $this->make_application_request('search/tweets.json'.$params.'&tweet_mode=extended', 'GET');
 		}
 	}
 }
