@@ -8,33 +8,65 @@ session_name('twitter-app');
 session_start();
 
 require_once("config/config.php");
+include("Auth.php");
+
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 
 class TwitterRequest {
 
+	protected $url = 'https://api.twitter.com/1.1/';
 	protected $twitter_client;
+	protected $auth_client;
 
 	//Contructor that takes a GuzzleHttp client as a parameter and sets the global variable.
 	public function __construct() {
 		$this->twitter_client = new Client([
-			'base_uri' => 'https://api.twitter.com/1.1/', 
+			'base_uri' => $this->url, 
 			'timeout' => 2.0, 
 			'headers' => [
-				'User-Agent' => 'twitter-app/1.0',
-				'Authorization' => 'Bearer '.$_SESSION['access_token'], 
+				'User-Agent' => 'twitter-app/1.0', 
 				'Accept-Encoding' => 'gzip'
 		]]);
+
+		$this->auth_client = new Auth();
 	}
 
 	//Function to make and authorize a request to the Twitter API from the application.
-	protected function make_application_request($api_string, $api_method, $options = []) {
+	protected function make_application_request($api_string, $api_method) {
 		try {
-			$response = $this->twitter_client->request($api_method, $api_string, $options);
+			$response = $this->twitter_client->request($api_method, $api_string, [
+				'headers' => [
+					'Authorization' => 'Bearer '.$_SESSION['access_token']
+				]
+			]);
 
 			return $response->getBody();
 		}catch(RequestException $e) {
 			return $e->getResponse()->getBody();
+		}
+	}
+
+	protected function make_user_request($api_string, $api_method) {
+		if(isset($_SESSION["oauth_user_token"]) && isset($_SESSION["oauth_user_token_secret"])) {
+			$oauth_user_token = $_SESSION["oauth_user_token"];
+			$oauth_user_token_secret = $_SESSION["oauth_user_token_secret"];
+			$params = explode("?", $api_string)[1];
+
+			try {
+				$response = $this->twitter_client->request($api_method, $api_string, [
+					'headers' => [
+						'body' => "status=This is a test",
+						'Authorization' => $this->auth_client->generate_auth_header($this->url.$api_string, $oauth_user_token, $oauth_user_token_secret, "status=This is a test")
+					]
+				]);
+
+				return $response->getBody();
+			}catch(RequestException $e) {
+				return $e->getResponse()->getBody();
+			}
+		}else {
+			return json_encode(array("errors" => ["message" => "The user must be authorized"]));
 		}
 	}
 
@@ -55,14 +87,6 @@ class TwitterRequest {
 		}
 	}
 
-	public function search_tweets_by_geocode($geocode_str) {
-		return $this->make_application_request('search/tweets.json?geocode='.$geocode_str.'&tweet_mode=extended&lang=en', 'GET');
-	}
-
-	public function get_user_timeline($user) {
-		return $this->make_application_request('statuses/user_timeline.json?screen_name='.$user.'&tweet_mode=extended&lang=en', 'GET');
-	}
-
 	public function search_tweets($user, $search_term, $geolocation, $count) {
 		$user_exists = json_decode($this->user_exists($user), true);
 
@@ -78,6 +102,10 @@ class TwitterRequest {
 		if(!empty($params)) {
 			return $this->make_application_request('search/tweets.json'.$params.'&tweet_mode=extended', 'GET');
 		}
+	}
+
+	public function post_tweet($tweet_message) {
+		return $this->make_user_request("statuses/update.json", 'POST');
 	}
 }
 

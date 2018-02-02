@@ -7,7 +7,11 @@ error_reporting(E_ALL);
 
 	include("../../twitter-app/Auth.php");
 
-	use GuzzleHttp\Client;
+	if(isset($_GET["logout"]) && $_GET["logout"] == 1) {
+		unset($_SESSION["oauth_user_token"]);
+		unset($_SESSION["oauth_user_token_secret"]);
+		unset($_SESSION["username"]);
+	}
 
 	$auth = new Auth();
 
@@ -15,7 +19,6 @@ error_reporting(E_ALL);
 	if(!isset($_SESSION['access_token'])) { 
 		$auth->request_app_only_access_token(); 
 	}
-	echo $auth->request_user_auth_request_token();
 ?>
 
 <!DOCTYPE html>
@@ -49,10 +52,17 @@ error_reporting(E_ALL);
 					</button>
 				</div>
 				<a class="navbar-item is-hidden-touch" onclick="get_tweets_in_current_area();">View Tweets in my Area</a>
+				<?php if(isset($_SESSION['oauth_user_token'])) { ?>
+					<a href="" class="navbar-item is-hidden-touch">Post a Tweet</a>
+				<?php } ?>
 			</div>
 
 			<div class="navbar-end">
-				<a href="#" class="navbar-item is-hidden-touch"><i class="fa fa-twitter"></i>&nbsp;Sign in with Twitter</a>
+				<?php if(isset($_SESSION['oauth_user_token']) && isset($_SESSION["username"])) { ?>
+					<span class="navbar-item is-hidden-touch">Logged in as <?php echo "@".$_SESSION["username"]; ?></span>&nbsp;<a href="index.php?logout=1" class="navbar-item is-hidden-touch"><i class="fa fa-twitter"></i>&nbsp;Sign Out?</a>
+				<?php }else { ?>
+					<a href="oauth/request_token.php" class="navbar-item is-hidden-touch"><i class="fa fa-twitter"></i>&nbsp;Sign in with Twitter</a>
+				<?php } ?>
 			</div>
 		</nav>
 
@@ -90,8 +100,9 @@ error_reporting(E_ALL);
 		<div id="main_container">
 			<div id="content">
 				<div id="results">
-					<span style="position: absolute; top: 45%; left: 43%; font-size: 20pt;">No Data to show, please make a search.</span>
+					<span style="font-size: 20pt;">No Data to show, please make a search.</span>
 				</div>
+				<div style="text-align: center; margin: 0 auto; width: 400px"><button class="button is-outline">Load More</button></div>
 			</div>
 		</div>
 	</body>

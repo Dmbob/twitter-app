@@ -2,6 +2,7 @@
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
+
 	include("../../../../twitter-app/TwitterRequest.php");
 
 	$twitter = new TwitterRequest();
@@ -22,6 +23,8 @@ error_reporting(E_ALL);
 		$geo = isset($_GET['geo']) ? htmlspecialchars($_GET['geo']) : "";
 		$count = isset($_GET['count']) ? htmlspecialchars($_GET["count"]) : "25";
 
-		echo $twitter->search_tweets(urlencode($user), urlencode($query), urlencode($geo), urlencode($count));
+		// echo $twitter->search_tweets(urlencode($user), urlencode($query), urlencode($geo), urlencode($count));
+
+		echo $twitter->post_tweet("This is a test, please ignore");
 	}
 ?>
