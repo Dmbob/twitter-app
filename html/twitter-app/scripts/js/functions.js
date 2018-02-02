@@ -107,7 +107,7 @@ function search_tweets() {
 	var searchParameters = get_search_params();
 	console.log(searchParameters);
 	$.get("scripts/php/search_twitter.php?"+searchParameters, function(response) {
-		console.log(response);
+		// console.log(response);
 		// $("#results").html(response);
 		var jsonData = JSON.parse(response);
 		$("#error_result").html("");
