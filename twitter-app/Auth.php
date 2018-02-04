@@ -27,71 +27,60 @@ class Auth {
 		return $encoded_auth_string;
 	}
 
-	protected function generate_oauth_signature($url, $oauth_consumer_key, $oauth_callback="", $oauth_nonce, $oauth_signature_method, $oauth_timestamp, $oauth_token="", $oauth_token_secret="", $params="") {
-		$oauth_token_str = "";
-		$oauth_token_secret_str = "";
-		$oauth_callback_str = "";
+	protected function build_parameter_string($params = [], $data) {
+		$param_string = "";
+		$params = array_merge($params, $data);
+		ksort($params);
 
-		if(!empty($oauth_token)) {
-			$oauth_token_str = "&oauth_token=".urlencode($oauth_token);
+		$last_parameter = end($params);
+
+		foreach($params as $key => $value) {
+			$end_char = ($value == $last_parameter) ? "" : "&";
+			$param_string .= rawurlencode($key)."=".rawurlencode($value).$end_char;
 		}
 
-		if(!empty($oauth_token_secret)) {
-			$oauth_token_secret_str = $oauth_token_secret;
-		}
+		return $param_string;
+	}
 
-		if(!empty($oauth_callback)) {
-			// /$oauth_callback_str = "oauth_callback=".$oauth_callback."&";
-		}
+	protected function generate_oauth_signature($url, $oauth_token_secret = "", $parameters = [], $data) {
+		$parameter_string = $this->build_parameter_string($parameters, $data);
 
-		$params_str = empty($params) ? "" : "&".urlencode($params);
+		$signature_base_string = "POST&".rawurlencode(explode("?", $url)[0])."&".rawurlencode($parameter_string);
 
-		$parameter_string = $oauth_callback_str.
-							"oauth_consumer_key=".$oauth_consumer_key.
-							"&oauth_nonce=".$oauth_nonce.
-							"&oauth_signature_method=".$oauth_signature_method.
-							"&oauth_timestamp=".$oauth_timestamp.
-							$oauth_token_str.
-							"&oauth_version=1.0".
-							$params_str;
-
-		$signature_base_string = "POST&".urlencode($url)."&".urlencode($parameter_string);
-		$signing_key = urlencode(CONSUMER_SECRET)."&".urlencode($oauth_token_secret_str);
-
-		echo $signature_base_string."<br><br>";
+		$signing_key = rawurlencode(CONSUMER_SECRET)."&".rawurlencode($oauth_token_secret);
 		
 		$oauth_signature = base64_encode(hash_hmac('sha1', $signature_base_string, $signing_key, true));
+
 		return $oauth_signature;
 	}
 
-	public function generate_auth_header($url, $oauth_token="", $oauth_token_secret="", $params="") {
+	public function generate_auth_header($url, $oauth_token_secret = "", $parameters = [], $data = []) {
 		$date = new DateTime();
-
 		$timestamp = $date->getTimestamp();
-		$oauth_nonce = hash('sha256', $timestamp);
-		$oauth_callback = CALLBACK_URL;
-		$oauth_consumer_key = CONSUMER_KEY;
-		$oauth_signature_method = "HMAC-SHA1";
-		$oauth_user_token = $oauth_token;
-		$oauth_user_secret = $oauth_token_secret;
+		$auth_header = "OAuth ";
 
-		$oauth_signature = urlencode($this->generate_oauth_signature(
-			$url, 
-			urlencode($oauth_consumer_key), 
-			urlencode($oauth_callback), 
-			urlencode($oauth_nonce), 
-			urlencode($oauth_signature_method), 
-			urlencode($timestamp),
-			$oauth_user_token,
-			$oauth_user_secret,
-			$params
+		$parameters = array_merge($parameters, array(
+			"oauth_timestamp" => $timestamp,
+			"oauth_nonce" => hash('sha256', $timestamp),
+			"oauth_consumer_key" => CONSUMER_KEY,
+			"oauth_signature_method" => "HMAC-SHA1",
+			"oauth_version" => "1.0"
 		));
 
-		$oauth_user_token_str = empty($oauth_user_token) ? "" : ', oauth_token="'.$oauth_user_token.'"';
 
-		$auth_header = 'OAuth oauth_nonce="'.$oauth_nonce.', oauth_signature_method="HMAC-SHA1", oauth_timestamp="'.$timestamp.'", oauth_consumer_key="'.$oauth_consumer_key.'", oauth_signature="'.$oauth_signature.'"'.$oauth_user_token_str.', oauth_version="1.0"';
+		$oauth_signature = $this->generate_oauth_signature($url, $oauth_token_secret, $parameters, $data);
 
-		echo $auth_header."<br><br>";
+		$parameters = array_merge($parameters, ["oauth_signature" => $oauth_signature]); 
+
+		ksort($parameters);
+
+		$last_parameter = end($parameters);
+
+		foreach($parameters as $key => $value) {
+			$end_char = ($value == $last_parameter) ? '"' : '", ';
+			$auth_header .= rawurlencode($key).'="'.rawurlencode($value).$end_char;
+		}
+
 		return $auth_header;
 	}
 
@@ -103,7 +92,7 @@ class Auth {
 			'headers' => [
 				'User-Agent' => 'twitter-app/1.0',
 				'Authorization' => $this->encode_consumer_info(),
-				'Content-Type' => 'application/x-www-form-urlencoded;charset=UTF-8',
+				'Content-Type' => 'application/x-www-form-rawurlencoded;charset=UTF-8',
 				'Content-Length' => '29',
 				'Accept-Encoding' => 'gzip'
 			]
@@ -117,7 +106,7 @@ class Auth {
 	public function request_user_auth_request_token() {
 		$response = $this->auth_client->request('POST', "oauth/request_token", [
 			'headers' => [
-				'Authorization' => $this->generate_auth_header("https://api.twitter.com/oauth/request_token")
+				'Authorization' => $this->generate_auth_header("https://api.twitter.com/oauth/request_token", "", ["oauth_callback" => CALLBACK_URL])
 			]
 		]);
 
@@ -131,7 +120,7 @@ class Auth {
 	public function request_user_access_token($oauth_token, $oauth_verifier) {
 		$response = $this->auth_client->request('POST', 'oauth/access_token?oauth_verifier='.$oauth_verifier, [
 			'headers' => [
-				'Authorization' => $this->generate_auth_header($this->url, $oauth_token, "", "oauth_verifier=".$oauth_verifier)
+				'Authorization' => $this->generate_auth_header($this->url, "", ["oauth_token" => $oauth_token, "oauth_verifier" => $oauth_verifier])
 			]
 		]);
 

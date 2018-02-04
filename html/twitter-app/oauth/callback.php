@@ -1,7 +1,4 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
 	session_name("twitter-app");
 	session_start();
 
@@ -14,9 +11,7 @@ error_reporting(E_ALL);
 		$_SESSION["oauth_user_token"] = explode("=", explode("&", $user_token_str)[0])[1];
 		$_SESSION["oauth_user_token_secret"] = explode("=", explode("&", $user_token_str)[1])[1];
 		$_SESSION["username"] = explode("=", explode("&", $user_token_str)[3])[1];
-	}else {
-		echo "There was a problem, please try again, or contact the Administrator.";
 	}
 
-	// echo "<script> window.location='../'; </script>";
+	echo "<script> window.location='../'; </script>";
 ?>

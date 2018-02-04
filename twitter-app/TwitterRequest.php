@@ -24,10 +24,7 @@ class TwitterRequest {
 		$this->twitter_client = new Client([
 			'base_uri' => $this->url, 
 			'timeout' => 2.0, 
-			'headers' => [
-				'User-Agent' => 'twitter-app/1.0', 
-				'Accept-Encoding' => 'gzip'
-		]]);
+		]);
 
 		$this->auth_client = new Auth();
 	}
@@ -51,19 +48,42 @@ class TwitterRequest {
 		if(isset($_SESSION["oauth_user_token"]) && isset($_SESSION["oauth_user_token_secret"])) {
 			$oauth_user_token = $_SESSION["oauth_user_token"];
 			$oauth_user_token_secret = $_SESSION["oauth_user_token_secret"];
-			$params = explode("?", $api_string)[1];
+
+			$url = explode("?", $api_string)[0];
+			$url_params = explode("?", $api_string)[1];
+
+			$encoded_params = array();
+
+			$auth_data = array("oauth_token" => $oauth_user_token);
+			$data = array();
+
+			foreach(explode("&", $url_params) as $params) {
+				list($key, $value) = explode("=", $params);
+				$data = array_merge($data, [$key => $value]);
+
+				array_push($encoded_params, $key."=".rawurlencode($value));
+			}
+
+			$encoded_params_str = implode("&", $encoded_params);
+
+			$request_url = $url . "?" . $encoded_params_str;
 
 			try {
-				$response = $this->twitter_client->request($api_method, $api_string, [
+				$response = $this->twitter_client->request($api_method, $request_url, [
 					'headers' => [
-						'body' => "status=This is a test",
-						'Authorization' => $this->auth_client->generate_auth_header($this->url.$api_string, $oauth_user_token, $oauth_user_token_secret, "status=This is a test")
+						'Accept' => '*/*',
+						'Connection' => 'close',
+						'User-Agent' => 'twitter-app/1.0',
+						'Content-Type' => 'application/x-www-form-urlencoded',
+						'Authorization' => $this->auth_client->generate_auth_header($this->url . $api_string, $oauth_user_token_secret, $auth_data, $data),
+						'Accept-Encoding' => 'gzip'
 					]
 				]);
 
-				return $response->getBody();
+				return "Response: ".$response->getBody();
 			}catch(RequestException $e) {
-				return $e->getResponse()->getBody();
+				return "Response: ".$e->getResponse()->getBody();
+				// return $e;
 			}
 		}else {
 			return json_encode(array("errors" => ["message" => "The user must be authorized"]));
@@ -105,7 +125,7 @@ class TwitterRequest {
 	}
 
 	public function post_tweet($tweet_message) {
-		return $this->make_user_request("statuses/update.json", 'POST');
+		return $this->make_user_request("statuses/update.json?status=".$tweet_message, 'POST');
 	}
 }
 

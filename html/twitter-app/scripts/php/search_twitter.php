@@ -23,8 +23,6 @@ error_reporting(E_ALL);
 		$geo = isset($_GET['geo']) ? htmlspecialchars($_GET['geo']) : "";
 		$count = isset($_GET['count']) ? htmlspecialchars($_GET["count"]) : "25";
 
-		// echo $twitter->search_tweets(urlencode($user), urlencode($query), urlencode($geo), urlencode($count));
-
-		echo $twitter->post_tweet("This is a test, please ignore");
+		echo $twitter->search_tweets(urlencode($user), urlencode($query), urlencode($geo), urlencode($count));
 	}
 ?>
