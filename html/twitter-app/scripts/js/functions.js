@@ -175,6 +175,29 @@ function get_tweets_in_current_area() {
 	}
 }
 
+function hide_modal() {
+    $("#post_tweet").removeClass("is-active");
+}
+
+function show_modal() {
+    $("#post_tweet").addClass("is-active");
+
+    $("#post_tweet_btn").unbind().click(function() {
+    	$("#post_tweet_btn").prop("disabled", true);
+    	$("#post_tweet_btn").addClass("is-loading");
+    	
+    	$.post("scripts/php/post_tweet.php", {tweet: $("#status").val()}, function(response) {
+    		// console.log(response);
+    	}).then(function() {
+    		$("#post_tweet_btn").prop("disabled", false);
+    		$("#post_tweet_btn").removeClass("is-loading");
+    		$("#status").val("");
+
+    		hide_modal();
+    	});
+    });
+}
+
 $(document).ready(function() {
 	$("#results").shapeshift();
 

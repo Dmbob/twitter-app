@@ -67,7 +67,7 @@ class TwitterRequest {
 			$encoded_params_str = implode("&", $encoded_params);
 
 			$request_url = $url . "?" . $encoded_params_str;
-
+			
 			try {
 				$response = $this->twitter_client->request($api_method, $request_url, [
 					'headers' => [

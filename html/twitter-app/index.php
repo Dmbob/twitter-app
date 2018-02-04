@@ -53,7 +53,7 @@ error_reporting(E_ALL);
 				</div>
 				<a class="navbar-item is-hidden-touch" onclick="get_tweets_in_current_area();">View Tweets in my Area</a>
 				<?php if(isset($_SESSION['oauth_user_token'])) { ?>
-					<a href="" class="navbar-item is-hidden-touch">Post a Tweet</a>
+					<a onclick="show_modal();" class="navbar-item is-hidden-touch">Post a Tweet</a>
 				<?php } ?>
 			</div>
 
@@ -104,6 +104,20 @@ error_reporting(E_ALL);
 				</div>
 				<div style="text-align: center; margin: 0 auto; width: 400px"><button class="button is-outline">Load More</button></div>
 			</div>
+		</div>
+
+		<div id="post_tweet" class="modal">
+			<div class="modal-background" onclick="hide_modal()"></div>
+			<div class="modal-content">
+				<div class="box">
+					<label class="label">Please enter your tweet below.</label>
+					<textarea id="status" class="textarea" maxlength="280"></textarea>
+					<hr>
+					<button id="post_tweet_btn" class="button is-primary">Post Tweet</button>
+					<button class="button is-danger" onclick="hide_modal()">Close</button>
+				</div>
+			</div>
+			<button class="modal-close is-large" aria-label="close" onclick="hide_modal()"></button>
 		</div>
 	</body>
 
