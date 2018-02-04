@@ -80,10 +80,9 @@ class TwitterRequest {
 					]
 				]);
 
-				return "Response: ".$response->getBody();
+				return $response->getBody();
 			}catch(RequestException $e) {
-				return "Response: ".$e->getResponse()->getBody();
-				// return $e;
+				return $e->getResponse()->getBody();
 			}
 		}else {
 			return json_encode(array("errors" => ["message" => "The user must be authorized"]));
@@ -114,7 +113,7 @@ class TwitterRequest {
 			return json_encode($user_exists);
 		}else {
 			$search_parameters = $this->build_search_query($user, $search_term, $geolocation);
-			return $this->make_application_request('search/tweets.json?q='.$search_parameters.'&count='.$count.'&tweet_mode=extended&lang=en', 'GET');
+			return $this->make_application_request('search/tweets.json?q='.$search_parameters.'%20exclude%3Areplies&count='.$count.'&tweet_mode=extended&lang=en', 'GET');
 		}
 	}
 

@@ -1,4 +1,8 @@
 var nextSetOfTweets = "";
+var foundTweetCount = 0;
+var neededTweets = 0;
+
+var MOBILE_WIDTH = 1024;
 
 function buildTwitterString(tweetData) {
 	tweetString = tweetData.full_text;
@@ -38,7 +42,7 @@ function buildTweetCard(tweetData) {
 	}
 
 	$.each(foundTweets, function(key, val) {
-		if(!val.in_reply_to_status_id && !val.possibly_sensitive) {
+		if(!val.possibly_sensitive) {
 			var rtweeted = false;
 			var retweeted_text = "";
 			var original_retweeter = "";
@@ -74,12 +78,16 @@ function buildTweetCard(tweetData) {
 			var card = Mustache.render(cardTemplate, cardData);
 
 			$("#results").append(card);
+
+			foundTweetCount+=1;
 		}
 	});
 	
-	$("#results").shapeshift({
-		animationSpeed: 100
-	});
+	if($(window).width() > MOBILE_WIDTH) {
+		$("#results").shapeshift({
+			animationSpeed: 100
+		});
+	}
 }
 
 function get_search_params() {
@@ -92,22 +100,23 @@ function get_search_params() {
 		geocodeStr = $("#latitude").val() + "," + $("#longitude").val() + ",5mi";
 	}
 
-	// console.log("user="+username+"&q="+searchQuery+"&geo="+geocodeStr);
-
 	return "user="+username+"&q="+searchQuery+"&geo="+geocodeStr+"&count="+tweetCount;
 }
 
 function search_tweets() {
+	foundTweetCount = 0;
 	$("#search_btn").addClass("is-loading");
 	$("#results").html("");
+	$("#results").css("height", "0px");
 	$("#results").trigger("ss-destroy");
+	nextSetOfTweets = "";
 
 	validate_input();
 
 	var searchParameters = get_search_params();
 	console.log(searchParameters);
 	$.get("scripts/php/search_twitter.php?"+searchParameters, function(response) {
-		console.log(response);
+		// console.log(response);
 		// $("#results").html(response);
 		var jsonData = JSON.parse(response);
 		$("#error_result").html("");
@@ -118,29 +127,52 @@ function search_tweets() {
 				$("#error_result").append(val.message + "<br>");
 			});
 		}else {
-			nextSetOfTweets = jsonData.search_metadata.next_results;
+			if($(window).width() < MOBILE_WIDTH) {
+				toggle_search();
+			}
+
+			if(jsonData.search_metadata.hasOwnProperty("next_results")) {
+				nextSetOfTweets = jsonData.search_metadata.next_results;
+			}else {
+				nextSetOfTweets = "";
+			}
+
 			buildTweetCard(jsonData);
 		}
 	}).then(function() {
 		$("#search_btn").removeClass("is-loading");
+
+		$("#found_results").html("Showing "+foundTweetCount+" tweets (scroll down to load more).");
 	});
 }
 
 function load_more_tweets() {
-	$.get("scripts/php/search_twitter.php?next_results="+encodeURIComponent(nextSetOfTweets), function(response) {
-		// console.log(response);
-		var jsonData = JSON.parse(response);
-		$("#error_result").html("");
-		console.log(JSON.parse(response));
-		if(jsonData.hasOwnProperty('errors')) { 
-			$.each(jsonData.errors, function(key, val) {
-				$("#error_result").append(val.message + "<br>");
-			});
-		}else {
-			nextSetOfTweets = jsonData.search_metadata.next_results;
-			buildTweetCard(jsonData);
-		}
-	});
+	if(nextSetOfTweets) {
+		$.get("scripts/php/search_twitter.php?next_results="+encodeURIComponent(nextSetOfTweets), function(response) {
+			// console.log(response);
+			var jsonData = JSON.parse(response);
+			$("#error_result").html("");
+			// console.log(JSON.parse(response));
+			if(jsonData.hasOwnProperty('errors')) { 
+				$.each(jsonData.errors, function(key, val) {
+					$("#error_result").append(val.message + "<br>");
+				});
+				return false;
+			}else {
+				if(jsonData.search_metadata.hasOwnProperty("next_results")) {
+					nextSetOfTweets = jsonData.search_metadata.next_results;
+				}else {
+					nextSetOfTweets = "";
+				}
+				
+				buildTweetCard(jsonData);
+			}
+		}).then(function() {
+			$("#found_results").html("Showing "+foundTweetCount+" tweets (scroll down to load more).");
+		});
+	}else {
+		$("#loading_button").css("display", "none");
+	}
 }
 
 //Callback function for the Google Places API.
@@ -159,17 +191,22 @@ function getGeolocation() {
 }
 
 function get_tweets_in_current_area() {
-	//$("#results").trigger("ss-destroy");
+	foundTweetCount = 0;
+	$("#loading_button").css("display", "inline-block");
+
 	if(navigator.geolocation) {
 		navigator.geolocation.getCurrentPosition(function(position) {
 			var lat_long_str = position.coords.latitude + "," + position.coords.longitude + ",5mi";
 			$("#results").html("");
+			$("#results").css("height", "0px");
 			$.get("scripts/php/search_twitter.php?geo="+lat_long_str, function(response) {
 				jsonData = JSON.parse(response);
 				// console.log(response);
-				console.log(jsonData);
+				// console.log(jsonData);
 				nextSetOfTweets = jsonData.search_metadata.next_results;
 				buildTweetCard(jsonData);
+			}).then(function() {
+				$("#found_results").html("Showing "+foundTweetCount+" tweets (scroll down to load more).");
 			});
 		});
 	}
@@ -187,24 +224,48 @@ function show_modal() {
     	$("#post_tweet_btn").addClass("is-loading");
     	
     	$.post("scripts/php/post_tweet.php", {tweet: $("#status").val()}, function(response) {
-    		console.log(response);
+    		// console.log(response);
+    		json = JSON.parse(response);
     	}).then(function() {
-    		$("#post_tweet_btn").prop("disabled", false);
-    		$("#post_tweet_btn").removeClass("is-loading");
-    		$("#status").val("");
-
-    		hide_modal();
+    		if(json.hasOwnProperty("errors")) {
+    			$("#post_err").html(json.errors[0].message);
+    			$("#post_tweet_btn").prop("disabled", false);
+	    		$("#post_tweet_btn").removeClass("is-loading");
+    		}else {
+	    		$("#post_tweet_btn").prop("disabled", false);
+	    		$("#post_tweet_btn").removeClass("is-loading");
+	    		$("#status").val("");
+	    		$("#post_err").html("");
+	    		hide_modal();
+    		}
     	});
     });
 }
 
-$(document).ready(function() {
-	$("#results").shapeshift();
+function remove_tweet(ref) {
+	foundTweetCount -= 1;
 
+	$(ref.parentNode.parentNode).css('display', 'none'); $('#results').trigger('ss-rearrange');
+	$("#found_results").html("Showing "+foundTweetCount+" tweets (scroll down to load more).");
+}
+
+$(document).ready(function() {
 	$(window).scroll(function() {
 		if($(window).scrollTop() + $(window).height() >= $(document).height()) {
-			load_more_tweets();
+			if(nextSetOfTweets) {
+				load_more_tweets();
+			}else {
+				$("#loading_button").css("display", "none");
+			}
 		}
+	});
+
+	$(document).ajaxStart(function() {
+		$("#loading_button").addClass("is-loading");
+	});
+
+	$(document).ajaxStop(function() {
+		$("#loading_button").removeClass("is-loading");
 	});
 
 	//Bind the enter key to the search button upon typing into the search box.
@@ -222,6 +283,7 @@ $(document).ready(function() {
 	});
 
 	$("#search_btn").unbind().click(function() {
+		$("#loading_button").css("display", "inline-block");
 		$(window).scrollTop(0);
 		search_tweets();
 	});

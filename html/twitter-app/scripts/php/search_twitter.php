@@ -3,14 +3,6 @@
 
 	$twitter = new TwitterRequest();
 
-	//Look at the first character of the search term and see if it is a special Twitter character.
-
-/*	if(isset($_GET['user'])) {
-		echo $twitter->get_user_timeline(urlencode($_GET['user']), urlencode($_GET['q']), urlencode($_GET['geo']));
-	}else {
-		echo $twitter->search_tweets(urlencode($_GET['q']), urlencode($_GET['geo']));
-	}*/
-
 	if(isset($_GET["next_results"])) {
 		echo $twitter->load_more_tweets($_GET["next_results"]);
 	}else {

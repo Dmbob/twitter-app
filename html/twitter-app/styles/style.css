@@ -9,14 +9,32 @@ body {
 	color: white;
 }
 
+nav {
+	border-bottom: 1px solid #5b5b5b;
+}
+
 #search_menu {
 	position: fixed;
 	z-index: 1;
-	width: 270px;
+	width: 300px;
 	max-height: 100%;
 	top: 150px;
 	left: 20px;
 	background-color: #262626;
+}
+
+#results_hero {
+	position: fixed;
+	background-color: #262626;
+	width: 100%;
+	z-index: 3;
+	padding-bottom: 15px;
+}
+
+#search_results {
+	margin: 0 auto;
+	width: 50%;
+	margin-top: 20px;
 }
 
 #search_items {
@@ -44,13 +62,15 @@ body {
 	height: 100%;
 	padding-left: 0px;
 	overflow-x: hidden;
+	padding-bottom: 50px;
 }
 
 #results {
 	position: relative;
 	margin: 0 auto;
 	width: 70%;
-	margin-top: 50px;
+	margin-top: 90px;
+	margin-left: 370px;
 }
 
 .tweet {
@@ -74,15 +94,20 @@ body {
 	width: 100%;
 }
 
-#search_btn {
+.menu_button {
 	width: 100%;
 	font-size: 14pt;
-	background-color: #2ba3ff;
 	text-decoration: none;
 	color: white;
 	border: none;
 	height: 35px;
+	margin-bottom: 10px;
 }
+
+	#search_btn {
+		margin-bottom: 30px;
+		background-color: #2ba3ff;
+	}
 
 .retweet-content {
 	transition: color 0.5s ease;
@@ -100,26 +125,144 @@ body {
 	color: black;
 }
 
-@media only screen and (max-width: 1626px) {
-	#main_container {
-		margin-left: 100px;
+/*@media only screen and (max-width: 1024px) {
+	.navbar .navbar-brand {
+		font-size: 18pt;
 	}
+
+	.navbar .navbar-brand button {
+		width: 65px;
+		height: 65px;
+		font-size: 18pt;
+	}
+
+	#search_menu {
+		display: none;
+		margin: 0;
+		z-index: 1;
+		width: 100%;
+		max-height: 100%;
+		top: 0;
+		left: 0;
+		background-color: #262626;
+		font-size: 16pt;
+	}
+
+	.control input{
+		height: 50px;
+		font-size: 16pt;
+	}
+
+	.control span{
+		height: 50px;
+		font-size: 16pt;
+	}
+
+	#search_menu input {
+		height: 50px;
+		font-size: 16pt;
+	}
+
+	#search_btn {
+		height: 50px;
+		font-size: 16pt;
+	}
+
+	#results_hero {
+		display: none;
+	}
+
 
 	#results {
 		column-count: 2;
 	}
-}
+}*/
 
 @media only screen and (max-width: 1024px) {
+	.tweet {
+		position: initial;
+		display: block;
+		width: 100%;
+		font-size: 16pt;
+		top: auto;
+		margin-bottom: 10px;
+	}
+
+	.navbar .navbar-brand {
+		font-size: 18pt;
+	}
+
+	.navbar .navbar-brand button {
+		width: 65px;
+		height: 65px;
+		font-size: 18pt;
+	}
+
+	#search_menu {
+		display: none;
+		margin: 0;
+		margin-top: 10px;
+		z-index: 1;
+		width: 100%;
+		max-height: 100%;
+		top: 0;
+		left: 0;
+		background-color: #262626;
+		font-size: 16pt;
+	}
+
+	#search_menu label {
+		font-size: 16pt;
+	}
+
+	.control input{
+		height: 55px;
+		font-size: 18pt;
+	}
+
+	.control span{
+		height: 55px;
+		font-size: 18pt;
+	}
+
+	#search_menu input {
+		height: 55px;
+		font-size: 18pt;
+	}
+
+	.menu_button {
+		height: 55px;
+		font-size: 18pt;
+	}
+
+	#search_btn {
+		margin-bottom: 30px;
+		background-color: #2ba3ff;
+	}
+
+	#results_hero {
+		display: none;
+	}
+
 	#results {
+		margin: 0 auto;
 		margin-bottom: 20px;
-		column-count: 1;
+		margin-top: 30px;
+		width: 90%;
 		padding: 0;
 	}
 
-	.tweet {
-		display: inline-block;
-		width: 100%;
-		font-size: 16pt;
+
+	#post_tweet .modal-content {
+		font-size: 17pt;
+	}
+
+	#post_tweet .modal-content label {
+		font-size: 17pt;
+	}
+
+	#post_tweet .modal-content textarea {
+		height: 400px;
+		font-size: 17pt;
 	}
 }

@@ -28,6 +28,7 @@ error_reporting(E_ALL);
 		<title>DM-Twitter-App</title>
 		<meta charset='utf-8' />
 		<link rel="stylesheet" type="text/css" href="styles/bulma.css">
+		<link rel="stylesheet" type="text/css" href="styles/animate.css">
 		<link rel="stylesheet" type="text/css" href="styles/style.css">
 
 		<script src="https://use.fontawesome.com/d7cec055af.js"></script>
@@ -37,15 +38,17 @@ error_reporting(E_ALL);
 		<script src="scripts/js/mustache.min.js"></script>
 		<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAjb4PSWxisxqge658jRMA4AWlyRe5jeRc&libraries=places&callback=getGeolocation" async defer></script>
 		<script src="scripts/js/functions.js"></script>
+		<script src="scripts/js/display.js"></script>
+		
 	</head>
 
 	<body>
 		<nav class="navbar is-dark is-fixed-top" role="navigation" aria-label="main-navigation">
 			<div class="navbar-start">
 				<div class="navbar-brand">
-					<a href="index.php" class="navbar-item" style="font-size: 14pt;"><b>Twitter Viewer</b></a>
+					<a href="index.php" class="navbar-item"><b>Twitter Viewer</b></a>
 
-					<button class="button navbar-burger is-dark">
+					<button class="button navbar-burger is-dark" onclick="toggle_search()">
 						<span></span>
 						<span></span>
 						<span></span>
@@ -57,7 +60,7 @@ error_reporting(E_ALL);
 				<?php } ?>
 			</div>
 
-			<div class="navbar-end">
+			<div class="navbar-end is-hidden-touch">
 				<?php if(isset($_SESSION['oauth_user_token']) && isset($_SESSION["username"])) { ?>
 					<span class="navbar-item is-hidden-touch">Logged in as <?php echo "@".$_SESSION["username"]; ?></span>&nbsp;<a href="index.php?logout=1" class="navbar-item is-hidden-touch"><i class="fa fa-twitter"></i>&nbsp;Sign Out?</a>
 				<?php }else { ?>
@@ -68,7 +71,7 @@ error_reporting(E_ALL);
 
 		<div id="results_hero">
 			<div id="search_results">
-
+				<span id="found_results"></span>
 			</div>
 		</div>
 
@@ -76,6 +79,7 @@ error_reporting(E_ALL);
 			<div id="search_items">
 				<h4 class="title is-4" style="color: white;">Search</h4>
 				<div id="error_result" style="color: #ff2121; font-size: 11pt; margin-bottom: 10px;"></div>
+				<label class="label" style="color: white;">Search Items</label>
 				<div class="control has-icons-left">
 					<input id="username" type="text" class="input search_input" placeholder="Twitter User">
 					<span class="icon is-left"><i class="fa fa-at"></i></span>
@@ -92,21 +96,33 @@ error_reporting(E_ALL);
 					<input id="longitude" type="hidden">
 					<span class="icon is-left"><i class="fa fa-map-marker"></i></span>
 				</div>
+				<label class="label" style="color: white;">Number of Tweets</label>
 				<input id="tweet_count" type="number" min="1" max="100" class="input search_input" placeholder="Number of Tweets" value="25">
-				<button id="search_btn" class="button navbar-item"><i class="fa fa-search"></i></button>
+				<button id="search_btn" class="button menu_button"><i class="fa fa-search"></i></button>
+				<div class="is-hidden-desktop">
+					<button class="button is-dark is-primary menu_button" onclick="get_tweets_in_current_area();">View Tweets in my Area</button>
+					<?php if(isset($_SESSION['oauth_user_token']) && isset($_SESSION["username"])) { ?>
+						<span style="color: white;">Logged in as <?php echo "@".$_SESSION["username"]; ?></span>&nbsp;<button class="button is-dark is-primary menu_button" onclick="window.location = 'index.php?logout=1';"><i class="fa fa-twitter"></i>&nbsp;Sign Out?</button>
+						<button class="button is-dark is-primary menu_button" onclick="show_modal();">Post a Tweet</button>
+					<?php }else { ?>
+						<button class="button is-dark is-primary menu_button" onclick="window.location = 'oauth/request_token.php';" class="navbar-item is-hidden-touch"><i class="fa fa-twitter"></i>&nbsp;Sign in with Twitter</button>
+					<?php } ?>
+				</div>
 			</div>
 		</div>
 
 		<div id="main_container">
 			<div id="content">
 				<div id="results">
-					<?php if(isset($_SESSION['access_token'])) { ?>
-						<span style="font-size: 20pt;">No Data to show, please make a search.</span>
-					<?php }else{ ?>
-						<span style="font-size: 20pt; color: red;">You can not make a search at this time, please try again later.<br>If this problem persists, please contact the Administrator</span>
-					<?php } ?>
+					<div style="text-align: center; margin: 0 auto; width: 80%;">
+						<?php if(isset($_SESSION['access_token'])) { ?>
+							<span style="font-size: 20pt;">No Data to show, please make a search.</span>
+						<?php }else{ ?>
+							<span style="font-size: 20pt; color: red;">You can not make a search at this time, please try again later.<br>If this problem persists, please contact the Administrator</span>
+						<?php } ?>
+					</div>
 				</div>
-				<div style="text-align: center; margin: 0 auto; width: 400px"><button class="button is-outline">Load More</button></div>
+				<div style="text-align: center; margin: 0 auto; width: 400px"><button id="loading_button" class="button" onclick="load_more_tweets()" style="display: none; color: white; background-color: transparent; margin-top: 50px; font-size: 16pt; border: none;">Load More Tweets</button></div>
 			</div>
 		</div>
 
@@ -115,6 +131,7 @@ error_reporting(E_ALL);
 			<div class="modal-content">
 				<div class="box">
 					<label class="label">Please enter your tweet below.</label>
+					<div id="post_err" style="color: red;"></div>
 					<textarea id="status" class="textarea" maxlength="280"></textarea>
 					<hr>
 					<button id="post_tweet_btn" class="button is-primary">Post Tweet</button>
@@ -129,7 +146,7 @@ error_reporting(E_ALL);
 	<script id="tweet-card-template" type="text/template">
 		<div class="card tweet item">
 			<div style="display: inline-block; float: right;">
-				<a onclick="$(this.parentNode.parentNode).css('display', 'none'); $('#results').trigger('ss-rearrange');" class="card-header-icon" aria-label="remove">
+				<a onclick="remove_tweet(this);" class="card-header-icon" aria-label="remove">
 					<span class="icon"><i style="color: red; font-size: 14pt;" class="fa fa-times"></i></span>
 				</a>
 			</div>
