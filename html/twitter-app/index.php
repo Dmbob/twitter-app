@@ -100,7 +100,11 @@ error_reporting(E_ALL);
 		<div id="main_container">
 			<div id="content">
 				<div id="results">
-					<span style="font-size: 20pt;">No Data to show, please make a search.</span>
+					<?php if(isset($_SESSION['access_token'])) { ?>
+						<span style="font-size: 20pt;">No Data to show, please make a search.</span>
+					<?php }else{ ?>
+						<span style="font-size: 20pt; color: red;">You can not make a search at this time, please try again later.<br>If this problem persists, please contact the Administrator</span>
+					<?php } ?>
 				</div>
 				<div style="text-align: center; margin: 0 auto; width: 400px"><button class="button is-outline">Load More</button></div>
 			</div>

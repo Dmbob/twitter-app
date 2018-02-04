@@ -187,7 +187,7 @@ function show_modal() {
     	$("#post_tweet_btn").addClass("is-loading");
     	
     	$.post("scripts/php/post_tweet.php", {tweet: $("#status").val()}, function(response) {
-    		// console.log(response);
+    		console.log(response);
     	}).then(function() {
     		$("#post_tweet_btn").prop("disabled", false);
     		$("#post_tweet_btn").removeClass("is-loading");
