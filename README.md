@@ -44,7 +44,7 @@ This project was developed on a server running Debian 8.9 with Apache 2, and PHP
 
 Libraries for PHP are handled with [Composer](https://getcomposer.org/) and the dependencies are in the 'twitter-app/config/composer.json' file.
 
-Unlike the client-side Javascript libraries, the PHP libraries are not included in the repository. You will need to install composer, and run ~~~~composer install~~~~ in the 'twitter-app/config' directory.
+Unlike the client-side Javascript libraries, the PHP libraries are not included in the repository. You will need to install composer, and run composer install in the 'twitter-app/config' directory.
 **Note: If this for some reason fails. Delete the composer.lock file and try again.**
 
 These libraries are required for PHP:
