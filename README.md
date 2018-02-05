@@ -44,8 +44,10 @@ This project was developed on a server running Debian 8.9 with Apache 2, and PHP
 
 Libraries for PHP are handled with [Composer](https://getcomposer.org/) and the dependencies are in the 'twitter-app/config/composer.json' file.
 
-Unlike the client-side Javascript libraries, the PHP libraries are not included in the repository. You will need to install composer, and run composer install in the 'twitter-app/config' directory.
+All of the libraries are included in the repository. If you want to install the PHP libraries again via composer, you will need to install composer, and run composer install in the 'twitter-app/config' directory.
 **Note: If this for some reason fails. Delete the composer.lock file and try again.**
+
+While I would not normally leave the libraries in the repo, I did this time for ease of setup and configuration.
 
 These libraries are required for PHP:
 * [Guzzle HTTP](http://docs.guzzlephp.org/en/stable/) - Web Request Library
@@ -78,8 +80,6 @@ I chose to go with a type of Masonry design for this website, mainly because I t
         * Purpose: Framework for Unit Testing in PHP
     	* License: Creative Commons Attribution 3.0 Unported License
 	    * Website: https://phpunit.de/
-
-**Note: The Javascript and CSS libraries are included in the repo, the PHP libraries will need to be install with composer.**
 
 * Javascript Libraries
     * JQuery
