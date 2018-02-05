@@ -9,7 +9,7 @@
 	defined("CONSUMER_KEY") or define("CONSUMER_KEY", "SUj2OlRmJt4r7cNaKHZ27dtcg");
 	defined("CONSUMER_SECRET") or define("CONSUMER_SECRET", "krIeNq4Q3kzVzjvJHlc9f2tQ7kjwMhYn34MLSHHiOb9DZOx4jD");
 	defined("CALLBACK_URL") or define("CALLBACK_URL", "https://dmbob.guru/twitter-app/oauth/callback.php");
-test
+
 	//Include any libraries, and their namespaces.
 	require('vendor/autoload.php');
 
