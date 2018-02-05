@@ -1,12 +1,17 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+/*
+* This is the index page for the app. 
+*
+* Author: Bob Henley
+*/
+
+	//Start the Twitter session.
 	session_name('twitter-app');
 	session_start();
 
 	include("../../twitter-app/Auth.php");
 
+	//Clear the session variables for when the user signs out.
 	if(isset($_GET["logout"]) && $_GET["logout"] == 1) {
 		unset($_SESSION["oauth_user_token"]);
 		unset($_SESSION["oauth_user_token_secret"]);
@@ -25,24 +30,29 @@ error_reporting(E_ALL);
 
 <html class="has-navbar-fixed-top">
 	<head>
-		<title>DM-Twitter-App</title>
+		<!-- Set the title and link all of the stylesheets and scripts -->
+		<title>Twitter-App</title>
 		<meta charset='utf-8' />
 		<link rel="stylesheet" type="text/css" href="styles/bulma.css">
 		<link rel="stylesheet" type="text/css" href="styles/animate.css">
 		<link rel="stylesheet" type="text/css" href="styles/style.css">
 
+		<!-- Load libraries -->
 		<script src="https://use.fontawesome.com/d7cec055af.js"></script>
 		<script src="scripts/js/jquery-3.3.1.min.js"></script>
 		<script src="scripts/js/jquery-ui.min.js"></script>
 		<script src="scripts/js/jquery.shapeshift.min.js"></script>
 		<script src="scripts/js/mustache.min.js"></script>
 		<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAjb4PSWxisxqge658jRMA4AWlyRe5jeRc&libraries=places&callback=getGeolocation" async defer></script>
+
+		<!-- Load non-libraries -->
 		<script src="scripts/js/functions.js"></script>
 		<script src="scripts/js/display.js"></script>
 		
 	</head>
 
 	<body>
+		<!-- Display the nav bar -->
 		<nav class="navbar is-dark is-fixed-top" role="navigation" aria-label="main-navigation">
 			<div class="navbar-start">
 				<div class="navbar-brand">
@@ -60,6 +70,7 @@ error_reporting(E_ALL);
 				<?php } ?>
 			</div>
 
+			<!-- These elements are hidden when the screen is in the mobile view -->
 			<div class="navbar-end is-hidden-touch">
 				<?php if(isset($_SESSION['oauth_user_token']) && isset($_SESSION["username"])) { ?>
 					<span class="navbar-item is-hidden-touch">Logged in as <?php echo "@".$_SESSION["username"]; ?></span>&nbsp;<a href="index.php?logout=1" class="navbar-item is-hidden-touch"><i class="fa fa-twitter"></i>&nbsp;Sign Out?</a>
@@ -69,12 +80,14 @@ error_reporting(E_ALL);
 			</div>
 		</nav>
 
+		<!-- Shows the text for how many tweets were found for the given search -->
 		<div id="results_hero">
 			<div id="search_results">
 				<span id="found_results"></span>
 			</div>
 		</div>
 
+		<!-- Menu for the search inputs -->
 		<div id="search_menu" class="box">
 			<div id="search_items">
 				<h4 class="title is-4" style="color: white;">Search</h4>
@@ -99,6 +112,8 @@ error_reporting(E_ALL);
 				<label class="label" style="color: white;">Number of Tweets</label>
 				<input id="tweet_count" type="number" min="1" max="100" class="input search_input" placeholder="Number of Tweets" value="25">
 				<button id="search_btn" class="button menu_button"><i class="fa fa-search"></i></button>
+
+				<!-- These buttons are hidden UNLESS the site is in mobile view -->
 				<div class="is-hidden-desktop">
 					<button class="button is-dark is-primary menu_button" onclick="get_tweets_in_current_area();">View Tweets in my Area</button>
 					<?php if(isset($_SESSION['oauth_user_token']) && isset($_SESSION["username"])) { ?>
@@ -111,6 +126,7 @@ error_reporting(E_ALL);
 			</div>
 		</div>
 
+		<!-- Container which contains all of the search results -->
 		<div id="main_container">
 			<div id="content">
 				<div id="results">
@@ -122,10 +138,11 @@ error_reporting(E_ALL);
 						<?php } ?>
 					</div>
 				</div>
-				<div style="text-align: center; margin: 0 auto; width: 400px"><button id="loading_button" class="button" onclick="load_more_tweets()" style="display: none; color: white; background-color: transparent; margin-top: 50px; font-size: 16pt; border: none;">Load More Tweets</button></div>
+				<div style="text-align: center; margin: 0 auto; width: 400px"><button id="loading_button" class="button" onclick="load_more_tweets()">Load More Tweets</button></div>
 			</div>
 		</div>
 
+		<!-- Modal that is hidden at the start which will allow a user to input a tweet to post -->
 		<div id="post_tweet" class="modal">
 			<div class="modal-background" onclick="hide_modal()"></div>
 			<div class="modal-content">
@@ -189,7 +206,7 @@ error_reporting(E_ALL);
 				</div>
 				<div style="margin-top: 10px;">
 					<div style="display: inline-block;"><i class="fa fa-retweet"></i>&nbsp;{{retweet_count}}</div>
-					<div style="display: inline-block; float: right"><a onclick="window.open('https://twitter.com/{{screenname}}/status/{{tweet_id}}');"><i class="fa fa-twitter"></i>Open in Twitter</a></div>
+					<div style="display: inline-block; float: right"><a href="https://twitter.com/{{screenname}}/status/{{tweet_id}}" target="_blank"><i class="fa fa-twitter"></i>Open in Twitter</a></div>
 				</div>
 			</div>
 		</div>

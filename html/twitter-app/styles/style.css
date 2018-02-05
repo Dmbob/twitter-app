@@ -1,3 +1,4 @@
+/* BASE STYLES */
 html {
 	background-color: #424242;
 	overflow-y: auto;
@@ -13,41 +14,6 @@ nav {
 	border-bottom: 1px solid #5b5b5b;
 }
 
-#search_menu {
-	position: fixed;
-	z-index: 1;
-	width: 300px;
-	max-height: 100%;
-	top: 150px;
-	left: 20px;
-	background-color: #262626;
-}
-
-#results_hero {
-	position: fixed;
-	background-color: #262626;
-	width: 100%;
-	z-index: 3;
-	padding-bottom: 15px;
-}
-
-#search_results {
-	margin: 0 auto;
-	width: 50%;
-	margin-top: 20px;
-}
-
-#search_items {
-	margin: 0 auto;
-	width: 90%;
-	font-size: 16pt;
-	color: #4f92ff;
-}
-
-#search_items input{
-	margin-bottom: 10px;
-}
-
 #main_container {
 	z-index: 0;
 	margin: 0;
@@ -56,31 +22,16 @@ nav {
 	overflow: auto;
 }
 
+/* SEARCH MENU STYLES */
 
-#content {
-	width: 100%;
-	height: 100%;
-	padding-left: 0px;
-	overflow-x: hidden;
-	padding-bottom: 50px;
-}
-
-#results {
-	position: relative;
-	margin: 0 auto;
-	width: 70%;
-	margin-top: 90px;
-	margin-left: 370px;
-}
-
-.tweet {
-	position: absolute;
-	border-radius: 10px;
-	width: 400px;
-}
-
-.tweet .media-content {
-	overflow: hidden;
+#search_menu {
+	position: fixed;
+	z-index: 1;
+	width: 300px;
+	max-height: 100%;
+	top: 150px;
+	left: 20px;
+	background-color: #262626;
 }
 
 #search {
@@ -104,10 +55,67 @@ nav {
 	margin-bottom: 10px;
 }
 
-	#search_btn {
-		margin-bottom: 30px;
-		background-color: #2ba3ff;
-	}
+#search_btn {
+	margin-bottom: 30px;
+	background-color: #2ba3ff;
+}
+
+
+/* RESULTS STYLES */
+
+#results_hero {
+	position: fixed;
+	width: 100%;
+	z-index: 3;
+	padding-bottom: 15px;
+
+	background-color: #262626;
+}
+
+#content {
+	width: 100%;
+	height: 100%;
+	padding-left: 0px;
+	overflow-x: hidden;
+	padding-bottom: 50px;
+}
+
+#results {
+	position: relative;
+	margin: 0 auto;
+	width: 70%;
+	margin-top: 90px;
+	margin-left: 370px;
+}
+
+#search_results {
+	margin: 0 auto;
+	width: 50%;
+	margin-top: 20px;
+}
+
+#search_items {
+	margin: 0 auto;
+	width: 90%;
+	font-size: 16pt;
+	color: #4f92ff;
+}
+
+#search_items input{
+	margin-bottom: 10px;
+}
+
+/* STYLES FOR EACH TWEET */
+
+.tweet {
+	position: absolute;
+	border-radius: 10px;
+	width: 400px;
+}
+
+.tweet .media-content {
+	overflow: hidden;
+}
 
 .retweet-content {
 	transition: color 0.5s ease;
@@ -125,68 +133,20 @@ nav {
 	color: black;
 }
 
-/*@media only screen and (max-width: 1024px) {
-	.navbar .navbar-brand {
-		font-size: 18pt;
-	}
+/* DEFAULT LOADING BUTTON STYLE */
+#loading_button {
+	display: none; 
+	color: white; 
+	background-color: transparent; 
+	margin-top: 50px; 
+	font-size: 16pt; 
+	border: none;
+}
 
-	.navbar .navbar-brand button {
-		width: 65px;
-		height: 65px;
-		font-size: 18pt;
-	}
-
-	#search_menu {
-		display: none;
-		margin: 0;
-		z-index: 1;
-		width: 100%;
-		max-height: 100%;
-		top: 0;
-		left: 0;
-		background-color: #262626;
-		font-size: 16pt;
-	}
-
-	.control input{
-		height: 50px;
-		font-size: 16pt;
-	}
-
-	.control span{
-		height: 50px;
-		font-size: 16pt;
-	}
-
-	#search_menu input {
-		height: 50px;
-		font-size: 16pt;
-	}
-
-	#search_btn {
-		height: 50px;
-		font-size: 16pt;
-	}
-
-	#results_hero {
-		display: none;
-	}
-
-
-	#results {
-		column-count: 2;
-	}
-}*/
+/* MOBILE DEVICE STYLES */
 
 @media only screen and (max-width: 1024px) {
-	.tweet {
-		position: initial;
-		display: block;
-		width: 100%;
-		font-size: 16pt;
-		top: auto;
-		margin-bottom: 10px;
-	}
+	/* NAVBAR MOBILE STYLES */
 
 	.navbar .navbar-brand {
 		font-size: 18pt;
@@ -197,6 +157,8 @@ nav {
 		height: 65px;
 		font-size: 18pt;
 	}
+
+	/* SEARCH MENU MOBILE STYLES */
 
 	#search_menu {
 		display: none;
@@ -240,18 +202,32 @@ nav {
 		background-color: #2ba3ff;
 	}
 
+	/* TWEET MOBILE STYLES */
+
+	.tweet {
+		position: initial;
+		display: block;
+		width: 100%;
+		font-size: 16pt;
+		top: auto;
+		margin-bottom: 10px;
+	}
+
 	#results_hero {
 		display: none;
 	}
 
 	#results {
+		display: block;
 		margin: 0 auto;
 		margin-bottom: 20px;
 		margin-top: 30px;
 		width: 90%;
+		height: 100%;
 		padding: 0;
 	}
 
+	/* POST TWEET MOBILE STYLES */
 
 	#post_tweet .modal-content {
 		font-size: 17pt;
