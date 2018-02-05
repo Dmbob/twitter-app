@@ -6,8 +6,8 @@
 */
 	
 	//Define the secret keys used in the application.
-	defined("CONSUMER_KEY") or define("CONSUMER_KEY", "SUj2OlRmJt4r7cNaKHZ27dtcg");
-	defined("CONSUMER_SECRET") or define("CONSUMER_SECRET", "krIeNq4Q3kzVzjvJHlc9f2tQ7kjwMhYn34MLSHHiOb9DZOx4jD");
+	defined("CONSUMER_KEY") or define("CONSUMER_KEY", "63Bh9wTvMVeFOkTXG2gn7qr2M");
+	defined("CONSUMER_SECRET") or define("CONSUMER_SECRET", "zL0xXfaQNSgYTlVpqaI4JFTHPyTzrWtKw3C94rwWolGJDlnhrF");
 	defined("CALLBACK_URL") or define("CALLBACK_URL", "https://dmbob.guru/twitter-app/oauth/callback.php");
 
 	//Include any libraries, and their namespaces.
