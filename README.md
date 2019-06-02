@@ -6,8 +6,6 @@ Application that allows a user to search for tweets based on username, hastags, 
 
 I chose to create the Twitter App as my project. The reason that I chose to do this is because Twitter has a fairly extensive API, and I wanted to learn more about it.
 
-I am currently hosting this site live at https://dmbob.guru/twitter-app/
-
 ### Usage ###
 
 The first thing you should do after downloading this application is update the config file in 'twitter-app/config/config.php'. 
